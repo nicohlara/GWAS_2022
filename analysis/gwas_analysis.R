@@ -116,6 +116,18 @@ t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
 
 
 
+
+#head(sunVCF_sync@snps$id)
+for (marker in c(1:10)) {#c(1:length(sunVCF_sync@snps$id))) {
+	marker_model <- lm(data = sunVCF_sync, t_ph_group$days_to_head ~ sunVCF_sync@sped$id + sunVCF_sync@snps$id[1])
+	print(marker_model)
+}
+
+
+lm(data = t_ph, days_to_head ~ Location + Cross_ID + Location:Cross_ID)
+
+
+
 ###Incredibly janky filtering for matrix work, makes model run but results aren't great looking
 matrix_df_ind <- data.frame()
 #matrix by individual IN family, works better than by family

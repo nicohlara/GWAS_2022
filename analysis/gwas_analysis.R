@@ -1,6 +1,7 @@
 #Perform GWAS on phenotypic data from Spring 2022 field data
 #Locations: Kinston and Midpines, NC
 #Created by Nicolas A. H. Lara
+#Created modelled after code written by Noah Dewitt in 2021
 #Last edit: 2022-5-26
 
 #Load in packages
@@ -116,20 +117,21 @@ t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
 
 
 ###Incredibly janky filtering for matrix work, makes model run but results aren't great looking
-matrix_df <- data.frame()
+matrix_df_ind <- data.frame()
 #matrix by individual IN family, works better than by family
 for (i in unique(t_ph_group$Cross_ID)) {
 	a <- filter(t_ph_group, Cross_ID == i)
 	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)
 	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% b) & !(Location == "Kinston")))
-	matrix_df <- rbind(matrix_df, df)
+	matrix_df_ind <- rbind(matrix_df_ind, df)
 }
-#matrix by family, 
-#matrix_df <- data.frame()
-#rand_cross_id <- sample(unique(t_ph_group$Cross_ID), length(unique(t_ph_group$Cross_ID))/2)
-#matrix_df <- filter(t_ph_group, (Cross_ID %in% rand_cross_id & Location == "Kinston") | (!(Cross_ID %in% rand_cross_id) & (Location == "Raleigh")))
-#write_csv(matrix_df, "output/matrix_df.csv")
-#rownames(matrix_df) <- matrix_df$Entry
+#matrix by family
+matrix_df_fam <- data.frame()
+rand_cross_id <- sample(unique(t_ph_group$Cross_ID), length(unique(t_ph_group$Cross_ID))/2)
+matrix_df_fam <- filter(t_ph_group, (Cross_ID %in% rand_cross_id & Location == "Kinston") | (!(Cross_ID %in% rand_cross_id) & (Location == "Raleigh")))
+rownames(matrix_df_fam) <- matrix_df_fam$Entry
+
+
 
 
 #hist(t_ph_group$days_to_head)
@@ -137,12 +139,38 @@ for (i in unique(t_ph_group$Cross_ID)) {
 #make covariate model
 #familyLocCov <- model.matrix(~ Location + Entry, t_ph_group)
 #familyLocCov <- model.matrix(~gsub("-\\d*$", "", t_ph_group$Entry) + t_ph_group$Location)
-familyLocCov <- model.matrix(~ Location + Entry, matrix_df)
-familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)
-
-######NEED TO SYNC UP LENGTH OF SUNVCF AND T_PHGN
-testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
 #testGWAS <- association.test(sunVCF_sync, t_ph_group$days_to_head, X = familyLocCov)
+###USING RANDOMLY FILTERED INDIVIDUAL MODEL
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df_ind)
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df_ind$Entry) + matrix_df_ind$Location)
+testGWAS_ind <- association.test(sunVCF_sync, matrix_df_ind$days_to_head, X = familyLocCov)
+###USING RANDOMLY FILTERED FAMILY MODEL
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df_fam)
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df_fam$Entry) + matrix_df_fam$Location)
+testGWAS_fam <- association.test(sunVCF_sync, matrix_df_fam$days_to_head, X = familyLocCov)
+###USING ONLY KINSTON
+t_ph_group_K <- filter(t_ph_group, Location == "Kinston")
+testGWAS_K <- association.test(sunVCF_sync, t_ph_group_K$days_to_head)
+###USING ONLY RALEIGH
+t_ph_group_R <- filter(t_ph_group, Location == "Raleigh")
+testGWAS_R <- association.test(sunVCF_sync, t_ph_group_R$days_to_head)
+
+tests <- list(testGWAS_ind, testGWAS_fam, testGWAS_K, testGWAS_R)
+
+manhatten_plot <- function(graph_name, dataframe) {
+	dataframe$LOG <- -log10(dataframe$p)
+	dataframe$chr <- str_replace(str_replace(dataframe$id, "^S", ""), "_\\d*$", "")
+	dataframe$pos <- as.numeric(str_replace(dataframe$id, "^S\\d[ABD]_", ""))
+	dataframe$FDR <- p.adjust(dataframe$p, method = "fdr")
+	dataframe$bon <- p.adjust(dataframe$p, method = "bonferroni")
+	#plot out model
+	manhattan(dataframe, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = graph_name)
+	abline(h = 5.6, col = "#659157")
+}
+#manhatten_plot("SunRILs Heading Date GWAS", tests[[1]])
+manhatten_plot("SunRILs Heading Date GWAS random individuals per location", tests[[1]])
+
+#Run statistical tests
 testGWAS$LOG <- -log10(testGWAS$p)
 testGWAS$chr <- str_replace(str_replace(testGWAS$id, "^S", ""), "_\\d*$", "")
 testGWAS$pos <- as.numeric(str_replace(testGWAS$id, "^S\\d[ABD]_", ""))

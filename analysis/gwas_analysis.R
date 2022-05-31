@@ -9,7 +9,7 @@ library(gaston)
 library(rrBLUP)
 
 #set working directory
-setwd("/Users/nico/Desktop/GWAS_2022/")
+setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
 
 ###READ IN PHENOTYPE FILE, CLEAN COLUMN NAMES, COMBINE LOCATIONS
 K22_pheno <- read.delim("data/Kin22-SunRils-T1-T30 Final.xlsx - 2022-05-12-11-55-18_Kin22-SunRi.csv", sep=",")

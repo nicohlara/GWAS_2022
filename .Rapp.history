@@ -1,0 +1,565 @@
+unique(t_ph_group$Cross_ID)
+t_ph_group <- filter(t_ph_group, !(Entry %in% single_crossLines))
+t_ph_group <- as.data.frame(t_ph_group)
+head(t_ph_group)
+sunVCF_sync <- select.inds(sunVCF, id %in% t_ph_group$Entry)
+t_phgn <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
+head(t_phgn)
+filter(t_ph_group, Cross_ID == UX1992)
+UX1992
+filter(t_ph_group, Cross_ID == "UX1992")
+length(filter(t_ph_group, Cross_ID == "UX1992"))
+length(filter(t_ph_group, Cross_ID == "UX1992")$Entry)
+b <- length(unique(a$Entry)
+)
+b <- length(unique(a$Entry))
+a <- filter(t_ph_group, Cross_ID == "UX1992")
+head(a)
+head(a$Entry)
+unique(a$Entry)
+length(unique(a$Entry))
+sample(a$Entry)
+sample(a$Entry, length(a$Entry/2))
+sample(a$Entry, length(a$Entry)/2)
+help(sample)
+b <- sample(a$Entry, length(a$Entry)/2)
+b
+length(b)
+length(unique(b))
+b <- sample(a$Entry, length(a$Entry)/2, replace=FALSE)
+length(b)
+length(unique(b))
+b <- sample(a$Entry, length(a$Entry)/2, replace=TRUE)
+length(b)
+length(b)
+b <- sample(a$Entry, length(a$Entry)/2, replace=TRUE)
+length(b)
+length(unique(b))
+b <- sample(a$Entry, length(a$Entry)/2)
+length(b)
+length(unique(b))
+order(b)
+sort(b)
+b <- unique(a$Entry)
+c <- sample(b, b/2)
+c <- sample(b, length(b)/2)
+c
+unique(c)
+a <- filter(t_ph_group, Cross_ID == "UX1992") %>% sample(Entry, length(entry)/2)
+a <- filter(t_ph_group, Cross_ID == "UX1992") %>% sample(Entry, length(Entry)/2)
+head(t_ph_group)
+a <- filter(t_ph_group, Cross_ID == "UX1992") %>% sample(unique(Entry), length(ntry)/2)
+a <- filter(t_ph_group, Cross_ID == "UX1992") %>% sample(unique(Entry), length(Entry)/2)
+head(filter(t_ph_group, Cross_ID == "UX1992"))
+result <- filter(t_ph_group, Cross_ID == "UX1992") %>% sample(unique("Entry"), length("Entry")/2)
+result
+result <- filter(t_ph_group, Cross_ID == "UX1992") %>% sample(unique(Entry), length(Entry)/2)
+a <- t_ph_group %>% filter(Cross_ID == "UX1992")
+head(a)
+sample(unique(Entry))
+a <- t_ph_group %>% filter(Cross_ID == "UX1992") %>% sample(unique(Entry))
+a <- t_ph_group %>% filter(Cross_ID == "UX1992") %>% sample(Entry)
+a <- t_ph_group %>% filter(Cross_ID == "UX1992") %>% sample(Entry, 2)
+a <- filter(t_ph_group, Cross_ID == "UX1992")
+b <- sample(unique(a$Entry), length(unique(a$Entry))/2)
+K_ph_group <- filter(t_ph_group, (Entry %in% b & Location == "Kinston"))
+head(K_ph_group)
+length(K_ph_group$Entry)
+length(t_ph_group$Entry)
+K_ph_group <- filter(t_ph_group, (Entry %in% b & Location == "Kinston") | !(Entry %in% b & Location == "Kinston"))
+K_ph_group
+K_ph_group <- filter(a, (Entry %in% b & Location == "Kinston") | !(Entry %in% b & Location == "Kinston"))
+K_ph_group
+length(a)
+length(a[,1])
+length(b)
+64*4
+length(filter(a, (Entry %in% b & Location == "Kinston"))
+)
+c <- filter(a, (Entry %in% b & Location == "Kinston"))
+head(c)
+length(c[,1])
+d <- filter(a, !(Entry %in% b & Location == "Kinston"))
+length(d[,1])
+d
+d <- filter(a, !(Entry %in% b & Location == "Raleigh"))
+d
+d <- filter(a, !(Entry %in% b) & !(Location == "Kinston"))
+d
+K_ph_group <- filter(a, (Entry %in% b & Location == "Kinston") | !((Entry %in% b) & !(Location == "Kinston")))
+head(K_ph_group)
+length(K_ph_group[,1])
+d <- filter(a, !((Entry %in% b) & !(Location == "Kinston")))
+length(d[,1])
+K_ph_group <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% b) & !(Location == "Kinston")))
+length(K_ph_group[,1])
+for (i in unique(t_ph_group$Cross_ID)) {#
+	a <- sample(unique(i$Entry), length(unique(i$Entry))/2)#
+	df <- filter(i, (Entry %in% a & Location == "Kinston") | (!(Entry %in% 		a) & !(Location == "Kinston")))#
+	matrix_df <- append(matrix_df, df)#
+}
+for (i in unique(t_ph_group$Cross_ID)) {#
+	a <- sample(unique(i$Entry), length(unique(i$Entry))/2)#
+	head(a)#
+	df <- filter(i, (Entry %in% a & Location == "Kinston") | (!(Entry %in% 		a) & !(Location == "Kinston")))#
+	head(df)#
+	#matrix_df <- append(matrix_df, df)#
+}
+for (i in unique(t_ph_group$Cross_ID)) {#
+	head(i)#
+	a <- sample(unique(i$Entry), length(unique(i$Entry))/2)#
+	head(a)#
+	df <- filter(i, (Entry %in% a & Location == "Kinston") | (!(Entry %in% 		a) & !(Location == "Kinston")))#
+	head(df)#
+	#matrix_df <- append(matrix_df, df)#
+}
+for (i in unique(t_ph_group$Cross_ID)) {#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(i$Entry), length(unique(i$Entry))/2)#
+	df <- filter(i, (Entry %in% b & Location == "Kinston") | (!(Entry %in% 		b) & !(Location == "Kinston")))#
+	head(df)#
+}
+for (i in unique(t_ph_group$Cross_ID)) {#
+	print(i)#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(i$Entry), length(unique(i$Entry))/2)#
+	df <- filter(i, (Entry %in% b & Location == "Kinston") | (!(Entry %in% 		b) & !(Location == "Kinston")))#
+	head(df)#
+}
+a <- filter(t_ph_group, Cross_ID == "Parent")
+head(a)
+a
+for (i in unique(t_ph_group$Cross_ID)) {#
+	print(i)#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)#
+	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% 		b) & !(Location == "Kinston")))#
+	head(df)#
+}
+matrix_df <- data.frame()
+for (i in unique(t_ph_group$Cross_ID)) {#
+	print(i)#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)#
+	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% 		b) & !(Location == "Kinston")))#
+	matrix_df <- append(matrix_df, df)#
+}
+head(matrix_df)
+matrix_df <- data.frame()#
+for (i in unique(t_ph_group$Cross_ID)) {#
+	print(i)#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)#
+	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% 		b) & !(Location == "Kinston")))#
+	matrix_df <- rbind(matrix_df, df)#
+}
+head(matrix_df)
+length(matrix_df$Entry)
+length(t_ph_group$Entry)
+1961*2
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)#
+######NEED TO SYNC UP LENGTH OF SUNVCF AND T_PHGN#
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+length(matrix_df$days_to_head)
+dim(sunVCF_sync)
+sunVCF_sync <- select.inds(sunVCF, id %in% t_ph_group$Entry)#
+t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
+matrix_df <- data.frame()#
+for (i in unique(t_ph_group$Cross_ID)) {#
+	print(i)#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)#
+	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% 		b) & !(Location == "Kinston")))#
+	matrix_df <- rbind(matrix_df, df)#
+}
+sunVCF_sync <- select.inds(sunVCF, id %in% t_ph_group$Entry)#
+t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)#
+#
+###Incredibly janky filtering for matrix work#
+matrix_df <- data.frame()#
+for (i in unique(t_ph_group$Cross_ID)) {#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)#
+	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% 		b) & !(Location == "Kinston")))#
+	matrix_df <- rbind(matrix_df, df)#
+}#
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)#
+######NEED TO SYNC UP LENGTH OF SUNVCF AND T_PHGN#
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+testGWAS$LOG <- -log10(testGWAS$p)#
+testGWAS$chr <- str_replace(str_replace(testGWAS$id, "^S", ""), "_\\d*$", "")#
+testGWAS$pos <- as.numeric(str_replace(testGWAS$id, "^S\\d[ABD]_", ""))#
+testGWAS$FDR <- p.adjust(testGWAS$p, method = "fdr")#
+testGWAS$bon <- p.adjust(testGWAS$p, method = "bonferroni")#
+#
+#plot out model#
+manhattan(testGWAS, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = "SunRILs Heading Date GWAS")#
+abline(h = 5.6, col = "#659157")
+matrix_df <- data.frame()#
+for (i in unique(t_ph_group$Cross_ID)) {#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)#
+	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% 		b) & !(Location == "Kinston")))#
+	matrix_df <- rbind(matrix_df, df)#
+}#
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)#
+######NEED TO SYNC UP LENGTH OF SUNVCF AND T_PHGN#
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+head(familyLocCov)
+heatmap(familyLocCov)
+library(tidyverse)#
+library(gaston)#
+library(rrBLUP)#
+#
+#set working directory#
+setwd("/Users/nico/Desktop/GWAS_2022/")#
+#
+###READ IN PHENOTYPE FILE, CLEAN COLUMN NAMES, COMBINE LOCATIONS#
+K22_pheno <- read.delim("data/Kin22-SunRils-T1-T30 Final.xlsx - 2022-05-12-11-55-18_Kin22-SunRi.csv", sep=",")#
+R22_pheno <- read.delim("data/R22-SunRil T1-30 Final.xlsx - Sheet1.csv", sep=",")#
+#clean up dataframes, rename columns#
+header.true <- function(df) {#
+  names(df) <- as.character(unlist(df[1,]))#
+  df[-1,]#
+}#
+K22_pheno <- header.true(K22_pheno)#
+names(K22_pheno)[14] <- "N_rust"#
+#names(K22_pheno)[names(K22_pheno) == "Tray"] <- "Kin_tray"#
+names(K22_pheno)[15] <- "G_rust"#
+names(K22_pheno)[names(K22_pheno) == "WDR 3/7"] <- "WDR"#
+#names(K22_pheno)[names(K22_pheno) == "flowering"] <- "Kin_flowering"#
+names(K22_pheno)[names(K22_pheno) == "Powdery Mildew"] <- "Powdery_mildew"#
+#names(R22_pheno)[names(R22_pheno) == "WDR"] <- "Ral_WDR"#
+#names(R22_pheno)[names(R22_pheno) == "flowering"] <- "Ral_flowering"#
+names(R22_pheno)[names(R22_pheno) == "Powdery.Mildew"] <- "Powdery_mildew"#
+#names(R22_pheno)[names(R22_pheno) == "Tray"] <- "Ral_tray"#
+names(R22_pheno)[names(R22_pheno) == "Plot_Id"] <- "Plot_ID"#
+names(R22_pheno)[names(R22_pheno) == "Cross_Num"] <- "Cross_ID"#
+names(R22_pheno)[names(R22_pheno) == "Cross_id"] <- "Cross"#
+#names(R22_pheno)[names(R22_pheno) == "SNB"] <- "Ral_SNB"#
+R22_pheno["Location"] <- "Raleigh"#
+K22_pheno["Location"] <- "Kinston"#
+R22_pheno <- R22_pheno[!(R22_pheno$Entry=="Barley"),]#
+K22_pheno <- K22_pheno[!(K22_pheno$Entry=="Barley"),]#
+K22_pheno$SNB <- ""#
+#Combine phenotype files#
+K22_pheno_subset <- K22_pheno[c("Cross_ID", "Entry", "WDR", "flowering", "Powdery_mildew", "SNB", "Location")]#
+R22_pheno_subset <- R22_pheno[c("Cross_ID", "Entry", "WDR", "flowering", "Powdery_mildew", "SNB", "Location")]#
+t_ph <- rbind(K22_pheno_subset, R22_pheno_subset)#
+write.table(t_ph, file='output/all_phenotypes.tsv', quote=FALSE, sep='\t', row.names = FALSE)#
+#
+###READ IN IMPUTED VCF FILE, CLEAN UP DATA#
+sunVCF <- read.vcf("data/SunRILs_2021_postimp_filt.vcf.gz", convert.chr = F)#
+#filter out parents and thin on LD#
+sunVCF <- select.inds(sunVCF, grepl("^UX", id))#
+sunVCF <- LD.thin(sunVCF, threshold = .8)#
+sunM <- as.matrix(sunVCF)#
+#reformat ids to get rid of extra text#
+sunVCF@ped$id <- gsub("-NWG", "", sunVCF@ped$id)#
+sunVCF@ped$id <- gsub("-A+", "", sunVCF@ped$id)#
+sunVCF@ped$id <- gsub("-NEG", "", sunVCF@ped$id)#
+#filter for resequenced and duplicated lines#
+sunVCF <- select.inds(sunVCF, !grepl("-A-", id))#
+sunVCF <- select.inds(sunVCF, !duplicated(id))
+sunMTest <- sunM[sample(c(1:nrow(sunM)), 1000), sample(c(1:ncol(sunM)), 5000)]#
+sunGRMTest <- A.mat(sunMTest)#
+heatmap(sunGRMTest, symm = T)
+genoCounts <- group_by(t_ph, Entry) %>% count()#
+parLines <- filter(genoCounts, n > 10)$Entry#
+single_crossLines <- filter(genoCounts, 1 == n)$Entry#
+crossLines <- filter(genoCounts, n == 2 )$Entry#
+multi_crossLines <- filter(genoCounts, 2 < n & 10 > n )$Entry #
+#
+#since we have 23 lines with more than 1 replicate at each location, we average them#
+t_ph_group <- group_by(t_ph, Location, Cross_ID, Entry) %>% summarize(days_to_head = mean(days_to_head))#
+#filter out any unreplicated lines#
+t_ph_group <- filter(t_ph_group, !(Entry %in% single_crossLines))#
+t_ph_group <- as.data.frame(t_ph_group)
+days <- c()#
+#for (i in length(t_ph$flowering)) {#
+for (i in c(1:length(t_ph$flowering))) {#
+	if (t_ph$Location[i] == "Kinston") {#
+		a <- difftime(as.Date(t_ph$flowering[i], format="%m/%d/%Y"),ISOdate(2021,10,28))#
+	} else {#
+		a <- difftime(as.Date(t_ph$flowering[i], format="%m/%d/%Y"),ISOdate(2021,11,4))#
+	}#
+	days <- c(days, as.numeric(a) -.5)#
+}#
+t_ph$days_to_head <- days
+genoCounts <- group_by(t_ph, Entry) %>% count()#
+parLines <- filter(genoCounts, n > 10)$Entry#
+single_crossLines <- filter(genoCounts, 1 == n)$Entry#
+crossLines <- filter(genoCounts, n == 2 )$Entry#
+multi_crossLines <- filter(genoCounts, 2 < n & 10 > n )$Entry #
+#
+#since we have 23 lines with more than 1 replicate at each location, we average them#
+t_ph_group <- group_by(t_ph, Location, Cross_ID, Entry) %>% summarize(days_to_head = mean(days_to_head))#
+#filter out any unreplicated lines#
+t_ph_group <- filter(t_ph_group, !(Entry %in% single_crossLines))#
+t_ph_group <- as.data.frame(t_ph_group)#
+#rownames(t_ph_group) <- t_ph_group$Entry
+sunVCF_sync <- select.inds(sunVCF, id %in% t_ph_group$Entry)#
+t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
+head(t_ph_group)
+write_csv(sigMarkers, "/Users/nico/Desktop/GWAS_2022/data/Nico_t_ph_group.csv")
+write_csv(t_ph_group, "/Users/nico/Desktop/GWAS_2022/data/Nico_t_ph_group.csv")
+length(unique(t_ph_group$Entry))
+length(t_ph_group$Entry)
+matrix_df <- data.frame()#
+for (i in unique(t_ph_group$Cross_ID)) {#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)#
+	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% 		b) & !(Location == "Kinston")))#
+	matrix_df <- rbind(matrix_df, df)#
+}
+head(matrix_df)
+length(unique(matrix_df$Entry))
+length(matrix_df$Entry)
+dim(sunvCF_sync)
+dim(sunVCF_sync)
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+testGWAS
+a <- unique(t_ph_group$Cross_ID)
+a
+b <- sample(a, length(a)/2)
+b
+matrix_df <- data.frame()
+head(t_ph_group)
+b <- sample(unique(t_ph_group$Cross_ID), length(unique(t_ph_group$Cross_ID))/2)
+rand_cross_id <- sample(unique(t_ph_group$Cross_ID), length(unique(t_ph_group$Cross_ID))/2)
+matrix_df <- filter(t_ph_group, (Cross_ID %in% rand_cross_id & Location == "Kinston") | (!(Entry %in% rand_cross_id) & (Location == "Raleigh")))
+head(matrix_df)
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+length(matrix_df)
+length(matrix_df$Entry)
+length(unique(matrix_df$Entry))
+matrix_df
+matrix_df <- filter(t_ph_group, (Cross_ID %in% rand_cross_id & Location == "Kinston") | (!(Cross_ID %in% rand_cross_id) & (Location == "Raleigh")))
+length(unique(matrix_df$Entry))
+length(matrix_df$Entry)
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+head(testGWAS)
+unique(testGWAS$p)
+write_csv(matrix_df, "output/matrix_df.csv")
+matrix_df <- data.frame()#
+#matrix by individual in family, produces p=NaN for everything#
+for (i in unique(t_ph_group$Cross_ID)) {#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)#
+	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% b) & !(Location == "Kinston")))#
+	matrix_df <- rbind(matrix_df, df)#
+}
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+head(testGWAS)
+length(matrix_df)
+length(matrix_df$days_to_head)
+length(familyLocCov)
+621*621
+length(familyLocCov[1,])
+length(familyLocCov[,1])
+621*622
+head(sunVCF_sync)
+head(matrix_df)
+rownames(matrix_df) <- matrix_df$Entry
+head(matrix_df)
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+head(testGWAS)
+help(association.test)
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+head(testGWAS)
+testGWAS$LOG <- -log10(testGWAS$p)#
+testGWAS$chr <- str_replace(str_replace(testGWAS$id, "^S", ""), "_\\d*$", "")#
+testGWAS$pos <- as.numeric(str_replace(testGWAS$id, "^S\\d[ABD]_", ""))#
+testGWAS$FDR <- p.adjust(testGWAS$p, method = "fdr")#
+testGWAS$bon <- p.adjust(testGWAS$p, method = "bonferroni")#
+#
+#plot out model#
+manhattan(testGWAS, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = "SunRILs Heading Date GWAS")#
+abline(h = 5.6, col = "#659157")
+head(testGWAS)
+max(testGWAS$p)
+min(testGWAS$p)
+summary(testGWAS$p)
+summary(testGWAS$LOG)
+matrix_df <- data.frame()#
+#matrix by individual in family, produces p=NaN for everything#
+for (i in unique(t_ph_group$Cross_ID)) {#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)#
+	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% b) & !(Location == "Kinston")))#
+	matrix_df <- rbind(matrix_df, df)#
+}
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)#
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)#
+######NEED TO SYNC UP LENGTH OF SUNVCF AND T_PHGN#
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+matrix_df <- data.frame()#
+#matrix by individual in family, produces p=NaN for everything#
+for (i in unique(t_ph_group$Cross_ID)) {#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)#
+	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% b) & !(Location == "Kinston")))#
+	matrix_df <- rbind(matrix_df, df)#
+}
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)#
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)#
+######NEED TO SYNC UP LENGTH OF SUNVCF AND T_PHGN#
+#testGWAS <- association.test(sunVCF_sync, t_ph_group$days_to_head, X = familyLocCov)#
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)#
+testGWAS$LOG <- -log10(testGWAS$p)#
+testGWAS$chr <- str_replace(str_replace(testGWAS$id, "^S", ""), "_\\d*$", "")#
+testGWAS$pos <- as.numeric(str_replace(testGWAS$id, "^S\\d[ABD]_", ""))#
+testGWAS$FDR <- p.adjust(testGWAS$p, method = "fdr")#
+testGWAS$bon <- p.adjust(testGWAS$p, method = "bonferroni")#
+#
+#plot out model#
+manhattan(testGWAS, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = "SunRILs Heading Date GWAS")#
+abline(h = 5.6, col = "#659157")
+length(testGWAS$Entry)
+length(testGWAS$id)
+matrix_df <- data.frame()#
+rand_cross_id <- sample(unique(t_ph_group$Cross_ID), length(unique(t_ph_group$Cross_ID))/2)#
+matrix_df <- filter(t_ph_group, (Cross_ID %in% rand_cross_id & Location == "Kinston") | (!(Cross_ID %in% rand_cross_id) & (Location == "Raleigh")))#
+#write_csv(matrix_df, "output/matrix_df.csv")#
+rownames(matrix_df) <- matrix_df$Entry
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)#
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)#
+######NEED TO SYNC UP LENGTH OF SUNVCF AND T_PHGN#
+#testGWAS <- association.test(sunVCF_sync, t_ph_group$days_to_head, X = familyLocCov)#
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)#
+testGWAS$LOG <- -log10(testGWAS$p)#
+testGWAS$chr <- str_replace(str_replace(testGWAS$id, "^S", ""), "_\\d*$", "")#
+testGWAS$pos <- as.numeric(str_replace(testGWAS$id, "^S\\d[ABD]_", ""))#
+testGWAS$FDR <- p.adjust(testGWAS$p, method = "fdr")#
+testGWAS$bon <- p.adjust(testGWAS$p, method = "bonferroni")#
+#
+#plot out model#
+manhattan(testGWAS, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = "SunRILs Heading Date GWAS")#
+abline(h = 5.6, col = "#659157")
+length(matrix_df$Entry)
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)
+familyLocCov[1,1]
+familyLocCov[1,1:2]
+familyLocCov[1:3,1:3]
+familyLocCov[1:3,1:4]
+familyLocCov[1:3,1:5]
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)
+familyLocCov[1:3,1:5]
+for (i in unique(t_ph_group$Cross_ID)) {#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)#
+	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% b) & !(Location == "Kinston")))#
+	matrix_df <- rbind(matrix_df, df)#
+}
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)#
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)#
+######NEED TO SYNC UP LENGTH OF SUNVCF AND T_PHGN#
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)#
+testGWAS$LOG <- -log10(testGWAS$p)#
+testGWAS$chr <- str_replace(str_replace(testGWAS$id, "^S", ""), "_\\d*$", "")#
+testGWAS$pos <- as.numeric(str_replace(testGWAS$id, "^S\\d[ABD]_", ""))#
+testGWAS$FDR <- p.adjust(testGWAS$p, method = "fdr")#
+testGWAS$bon <- p.adjust(testGWAS$p, method = "bonferroni")#
+#
+#plot out model#
+manhattan(testGWAS, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = "SunRILs Heading Date GWAS")#
+abline(h = 5.6, col = "#659157")
+sigMarkers <- filter(testGWAS, bon < .05)
+write_csv(sigMarkers, "output/SunRILs_heading_days_gwasOutput.csv")
+write_csv(sigMarkers, "output/SunRILs_heading_days_gwasOutput_2022.csv")
+matrix_df <- data.frame()#
+rand_cross_id <- sample(unique(t_ph_group$Cross_ID), length(unique(t_ph_group$Cross_ID))/2)#
+matrix_df <- filter(t_ph_group, (Cross_ID %in% rand_cross_id & Location == "Kinston") | (!(Cross_ID %in% rand_cross_id) & (Location == "Raleigh")))#
+#write_csv(matrix_df, "output/matrix_df.csv")#
+rownames(matrix_df) <- matrix_df$Entry
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)#
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)#
+######NEED TO SYNC UP LENGTH OF SUNVCF AND T_PHGN#
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)#
+testGWAS$LOG <- -log10(testGWAS$p)#
+testGWAS$chr <- str_replace(str_replace(testGWAS$id, "^S", ""), "_\\d*$", "")#
+testGWAS$pos <- as.numeric(str_replace(testGWAS$id, "^S\\d[ABD]_", ""))#
+testGWAS$FDR <- p.adjust(testGWAS$p, method = "fdr")#
+testGWAS$bon <- p.adjust(testGWAS$p, method = "bonferroni")#
+#
+#plot out model#
+manhattan(testGWAS, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = "SunRILs Heading Date GWAS")#
+abline(h = 5.6, col = "#659157")
+sigMarkers <- filter(testGWAS, bon < .05)#
+write_csv(sigMarkers, "output/SunRILs_heading_days_gwasOutput_2022.csv")
+help(association.test)
+sunVCF_sync <- select.inds(sunVCF, id %in% t_ph_group$Entry)#
+t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+head(testGWAS)
+familyLocCov <- model.matrix(~ Location + Entry, t_ph_group)
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+testGWAS$LOG <- -log10(testGWAS$p)#
+testGWAS$chr <- str_replace(str_replace(testGWAS$id, "^S", ""), "_\\d*$", "")#
+testGWAS$pos <- as.numeric(str_replace(testGWAS$id, "^S\\d[ABD]_", ""))#
+testGWAS$FDR <- p.adjust(testGWAS$p, method = "fdr")#
+testGWAS$bon <- p.adjust(testGWAS$p, method = "bonferroni")#
+#
+#plot out model#
+manhattan(testGWAS, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = "SunRILs Heading Date GWAS")#
+abline(h = 5.6, col = "#659157")
+head(testGWAS)
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df)
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)
+testGWAS$LOG <- -log10(testGWAS$p)#
+testGWAS$chr <- str_replace(str_replace(testGWAS$id, "^S", ""), "_\\d*$", "")#
+testGWAS$pos <- as.numeric(str_replace(testGWAS$id, "^S\\d[ABD]_", ""))#
+testGWAS$FDR <- p.adjust(testGWAS$p, method = "fdr")#
+testGWAS$bon <- p.adjust(testGWAS$p, method = "bonferroni")#
+#
+#plot out model#
+manhattan(testGWAS, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = "SunRILs Heading Date GWAS")#
+abline(h = 5.6, col = "#659157")
+head(testGWAS)
+#since we have 23 lines with more than 1 replicate at each location, we average them#
+t_ph_group <- group_by(t_ph, Location, Cross_ID, Entry) %>% summarize(days_to_head = mean(days_to_head))#
+#filter out any unreplicated lines#
+t_ph_group <- filter(t_ph_group, !(Entry %in% single_crossLines))#
+t_ph_group <- as.data.frame(t_ph_group)#
+#rownames(t_ph_group) <- t_ph_group$Entry#
+###SYNCING UP GENOTYPE AND PHENOTYPE DATA#
+#process to sync up phenotype and genotype files#
+sunVCF_sync <- select.inds(sunVCF, id %in% t_ph_group$Entry)#
+t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
+familyLocCov <- model.matrix(~ Location + Entry, t_ph_group)#
+#familyLocCov <- model.matrix(~ Location + Entry, matrix_df)#
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)#
+######NEED TO SYNC UP LENGTH OF SUNVCF AND T_PHGN#
+testGWAS <- association.test(sunVCF_sync, matrix_df$days_to_head, X = familyLocCov)#
+testGWAS$LOG <- -log10(testGWAS$p)#
+testGWAS$chr <- str_replace(str_replace(testGWAS$id, "^S", ""), "_\\d*$", "")#
+testGWAS$pos <- as.numeric(str_replace(testGWAS$id, "^S\\d[ABD]_", ""))#
+testGWAS$FDR <- p.adjust(testGWAS$p, method = "fdr")#
+testGWAS$bon <- p.adjust(testGWAS$p, method = "bonferroni")#
+#
+#plot out model#
+manhattan(testGWAS, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = "SunRILs Heading Date GWAS")#
+abline(h = 5.6, col = "#659157")
+head(testGWAS)
+sigMarkers <- filter(testGWAS, bon < .05)
+write_csv(sigMarkers, "output/SunRILs_heading_days_gwasOutput_2022.csv")
+sigMarkers
+testGWAS <- association.test(sunVCF_sync, t_ph_group$days_to_head, X = familyLocCov)
+familyLocCov <- model.matrix(~ Location + Entry, t_ph_group)
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df$Entry) + matrix_df$Location)
+testGWAS <- association.test(sunVCF_sync, t_ph_group$days_to_head, X = familyLocCov)
+testGWAS$LOG <- -log10(testGWAS$p)
+head(testGWAS)
+testGWAS <- association.test(sunVCF_sync, t_ph_group$days_to_head, X = familyLocCov)
+head(testGWAS)
+histogram(t_ph_group$days_to_head)
+hist(t_ph_group$days_to_head)

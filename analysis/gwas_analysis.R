@@ -8,13 +8,16 @@
 library(tidyverse)
 library(gaston)
 library(rrBLUP)
+#install.packages("lme4")
+library(lme4)
 
 #set working directory
 setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
 
 ###READ IN PHENOTYPE FILE, CLEAN COLUMN NAMES, COMBINE LOCATIONS
-K22_pheno <- read.delim("data/Kin22-SunRils-T1-T30 Final.xlsx - 2022-05-12-11-55-18_Kin22-SunRi.csv", sep=",")
-R22_pheno <- read.delim("data/R22-SunRil T1-30 Final.xlsx - Sheet1.csv", sep=",")
+#K22_pheno <- read.delim("data/Kin22-SunRils-T1-T30 Final.xlsx - 2022-05-12-11-55-18_Kin22-SunRi.csv", sep=",")
+K22_pheno <- read.delim("data/Kin22-SunRils-T1-T30.csv", sep=",")
+R22_pheno <- read.delim("data/R22-SunRil-T1-30.csv", sep=",")
 #clean up dataframes, rename columns
 header.true <- function(df) {
   names(df) <- as.character(unlist(df[1,]))
@@ -37,14 +40,35 @@ names(R22_pheno)[names(R22_pheno) == "Cross_id"] <- "Cross"
 #names(R22_pheno)[names(R22_pheno) == "SNB"] <- "Ral_SNB"
 R22_pheno["Location"] <- "Raleigh"
 K22_pheno["Location"] <- "Kinston"
+#R22_pheno["Height"] <- 0
 R22_pheno <- R22_pheno[!(R22_pheno$Entry=="Barley"),]
 K22_pheno <- K22_pheno[!(K22_pheno$Entry=="Barley"),]
 K22_pheno$SNB <- ""
 #Combine phenotype files
-K22_pheno_subset <- K22_pheno[c("Cross_ID", "Entry", "WDR", "flowering", "Powdery_mildew", "SNB", "Location")]
-R22_pheno_subset <- R22_pheno[c("Cross_ID", "Entry", "WDR", "flowering", "Powdery_mildew", "SNB", "Location")]
+K22_pheno_subset <- K22_pheno[c("Cross_ID", "Entry", "Awns", "WDR", "flowering", "Powdery_mildew", "SNB", "Location", "Height")]
+R22_pheno_subset <- R22_pheno[c("Cross_ID", "Entry", "Awns", "WDR", "flowering", "Powdery_mildew", "SNB", "Location", "Height")]
 t_ph <- rbind(K22_pheno_subset, R22_pheno_subset)
+#CLEAN DATA/MISLABELLED LINES
+t_ph <- mutate(t_ph, Entry = if_else(Entry == "UX1994-6.4", "UX1994-64", Entry))
+t_ph <- mutate(t_ph, Entry = if_else(Entry == "UX2029-4.6", "UX2029-46", Entry))
+t_ph$Height <- as.numeric(t_ph$Height)
+#ADD COLUMN CONVERTING FLOWERING TIME FROM DATE TO DAYS
+days <- c()
+#for (i in length(t_ph$flowering)) {
+for (i in c(1:length(t_ph$flowering))) {
+	if (t_ph$Location[i] == "Kinston") {
+		a <- difftime(as.Date(t_ph$flowering[i], format="%m/%d/%Y"),ISOdate(2021,10,28))
+	} else {
+		a <- difftime(as.Date(t_ph$flowering[i], format="%m/%d/%Y"),ISOdate(2021,11,4))
+	}
+	days <- c(days, as.numeric(a) -.5)
+}
+t_ph$days_to_head <- days
 write.table(t_ph, file='output/all_phenotypes.tsv', quote=FALSE, sep='\t', row.names = FALSE)
+
+#Awn testing
+awn_vector <- ifelse(t_ph$Awns=="+", 1,0)
+t_ph$Awns <- awn_vector
 
 ###READ IN IMPUTED VCF FILE, CLEAN UP DATA
 sunVCF <- read.vcf("data/SunRILs_2021_postimp_filt.vcf.gz", convert.chr = F)
@@ -60,32 +84,19 @@ sunVCF@ped$id <- gsub("-NEG", "", sunVCF@ped$id)
 sunVCF <- select.inds(sunVCF, !grepl("-A-", id))
 sunVCF <- select.inds(sunVCF, !duplicated(id))
 
-
-
 ###CHECK DATA TO ENSURE RELATIVE NORMALITY
 #Phenotypic data
 hist(as.numeric(t_ph$WDR), main="Winter dormancy release 2022")
-#have to convert flowering time to days
-days <- c()
-#for (i in length(t_ph$flowering)) {
-for (i in c(1:length(t_ph$flowering))) {
-	if (t_ph$Location[i] == "Kinston") {
-		a <- difftime(as.Date(t_ph$flowering[i], format="%m/%d/%Y"),ISOdate(2021,10,28))
-	} else {
-		a <- difftime(as.Date(t_ph$flowering[i], format="%m/%d/%Y"),ISOdate(2021,11,4))
-	}
-	days <- c(days, as.numeric(a) -.5)
-}
-t_ph$days_to_head <- days
 hist(as.numeric(days), breaks = 40, main = "Flowering date 2022")
 hist(as.numeric(t_ph$Powdery_mildew), main="Powdery mildew 2022")
 hist(as.numeric(t_ph$SNB), main="Septoria nodorum blotch 2022")
+hist(t_ph$Height, main="Height")
 #location testing
 sum(t_ph$Location=="Kinston")
 sum(t_ph$Location=="Raleigh")
 #Perform ANOVA to look at variation in heading date
 anova(lm(data = t_ph, days_to_head ~ Location + Cross_ID + Location:Cross_ID))
-
+anova(lm(data = t_ph, Height ~ Location + Cross_ID + Location:Cross_ID))
 #Genotypic data
 #check family structure using heatmap
 sunMTest <- sunM[sample(c(1:nrow(sunM)), 1000), sample(c(1:ncol(sunM)), 5000)]
@@ -95,14 +106,14 @@ heatmap(sunGRMTest, symm = T)
 
 ###CLEAN UP PHENOTYPIC DATA FOR COMBINING WITH GENOTYPE
 #check for duplication and lack of replication
-genoCounts <- group_by(t_ph, Entry) %>% count()
+genoCounts <- group_by(t_ph, Entry) %>% count() %>% ungroup()
 parLines <- filter(genoCounts, n > 10)$Entry
 single_crossLines <- filter(genoCounts, 1 == n)$Entry
 crossLines <- filter(genoCounts, n == 2 )$Entry
 multi_crossLines <- filter(genoCounts, 2 < n & 10 > n )$Entry 
 
 #since we have 23 lines with more than 1 replicate at each location, we average them
-t_ph_group <- group_by(t_ph, Location, Cross_ID, Entry) %>% summarize(days_to_head = mean(days_to_head))
+t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns)) %>% ungroup() %>% mutate(loc_fam = paste(Location, Cross_ID, sep="_"))
 #filter out any unreplicated lines
 t_ph_group <- filter(t_ph_group, !(Entry %in% single_crossLines))
 t_ph_group <- as.data.frame(t_ph_group)
@@ -114,19 +125,34 @@ t_ph_group <- as.data.frame(t_ph_group)
 sunVCF_sync <- select.inds(sunVCF, id %in% t_ph_group$Entry)
 t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
 
+###CREATE BASIC MODEL FOR MANHATTAN PLOT
+plot_df <- data.frame(id = character(), p = numeric())
+test_pheno <- t_ph_group
 
-
-
+ #filter(t_ph_group, Location == "Raleigh")
 #head(sunVCF_sync@snps$id)
-for (marker in c(1:10)) {#c(1:length(sunVCF_sync@snps$id))) {
-	marker_model <- lm(data = sunVCF_sync, t_ph_group$days_to_head ~ sunVCF_sync@sped$id + sunVCF_sync@snps$id[1])
-	print(marker_model)
+#i <- 3
+for (i in c(1:length(sunVCF_sync@snps$id))) {
+	a <- as.matrix(sunVCF_sync[,i])
+	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))
+	c <- colnames(a)
+	d <- merge(test_pheno,b)
+	if (length(unique(d$Marker)) > 1) {
+		#marker_model <- lm(data = d, Height ~ Marker * (Location*Cross_ID))
+		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)
+		p_val <- summary(marker_model)$coefficients["Marker",4]
+		#summary(aov(marker_model))
+		plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))
+	}
 }
+manhattan_plot("Test", plot_df)
 
 
-lm(data = t_ph, days_to_head ~ Location + Cross_ID + Location:Cross_ID)
 
 
+	a <- as.matrix(sunVCF_sync[,i])
+	geno_data <- data.frame(a, Location = "Kinston")
+	geno_data <- rbind(geno_data, data.frame(a, Location = "Raleigh"))
 
 ###Incredibly janky filtering for matrix work, makes model run but results aren't great looking
 matrix_df_ind <- data.frame()
@@ -169,7 +195,7 @@ testGWAS_R <- association.test(sunVCF_sync, t_ph_group_R$days_to_head)
 
 tests <- list(testGWAS_ind, testGWAS_fam, testGWAS_K, testGWAS_R)
 
-manhatten_plot <- function(graph_name, dataframe) {
+manhattan_plot <- function(graph_name, dataframe) {
 	dataframe$LOG <- -log10(dataframe$p)
 	dataframe$chr <- str_replace(str_replace(dataframe$id, "^S", ""), "_\\d*$", "")
 	dataframe$pos <- as.numeric(str_replace(dataframe$id, "^S\\d[ABD]_", ""))
@@ -180,7 +206,7 @@ manhatten_plot <- function(graph_name, dataframe) {
 	abline(h = 5.6, col = "#659157")
 }
 #manhatten_plot("SunRILs Heading Date GWAS", tests[[1]])
-manhatten_plot("SunRILs Heading Date GWAS random individuals per location", tests[[1]])
+manhattan_plot("SunRILs Heading Date GWAS random individuals per location", tests[[1]])
 
 #Run statistical tests
 testGWAS$LOG <- -log10(testGWAS$p)

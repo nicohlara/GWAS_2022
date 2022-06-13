@@ -114,7 +114,8 @@ crossLines <- filter(genoCounts, n == 2 )$Entry
 multi_crossLines <- filter(genoCounts, 2 < n & 10 > n )$Entry 
 
 #since we have 23 lines with more than 1 replicate at each location, we average them
-t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns)) %>% ungroup() %>% mutate(loc_fam = paste(Location, Cross_ID, sep="_"))
+t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns)) %>% ungroup()
+# %>% mutate(loc_fam = paste(Location, Cross_ID, sep="_"))
 #filter out any unreplicated lines
 t_ph_group <- filter(t_ph_group, !(Entry %in% single_crossLines))
 t_ph_group <- as.data.frame(t_ph_group)
@@ -127,40 +128,61 @@ sunVCF_sync <- select.inds(sunVCF, id %in% t_ph_group$Entry)
 t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
 
 ###CREATE BASIC MODEL FOR MANHATTAN PLOT
-plot_df <- data.frame(id = character(), p = numeric())
+#plot_df <- data.frame(id = character(), p = numeric())
+plot_df <- data.frame()
 test_pheno <- t_ph_group
-
- #filter(t_ph_group, Location == "Raleigh")
-#head(sunVCF_sync@snps$id)
-#i <- 3446
 for (i in c(1:length(sunVCF_sync@snps$id))) {
-#for (i in c(3446:3821)) {
-	#print(i)
 	a <- as.matrix(sunVCF_sync[,i])
 	b <- data.frame(Entry = rownames(a), Marker = as.vector(a[,1]))
 	c <- colnames(a)
 	if (length(unique(b$Marker)) > 1) {
-		##Marker model with merged datasets
 		d <- merge(test_pheno,b, by="Entry")
-		mm_awn <- lm(data = d, Awns ~ Marker) # + Cross_ID)
-		p_awn <- summary(mm_awn)$coefficients["Marker",4]
-		mm_height <- lm(data = d, Height ~ Marker)
-		p_height <- summary(mm_awn)$coefficients["Marker",4]
-		mm_hd <- lm(data = d, days_to_head ~ Marker)
-		p_hd <- summary(mm_awn)$coefficients["Marker",4]
+		p_vals <- data.frame(id = c)
+		for (j in c(4:length(test_pheno[1,]))) {
+			mm <- lm(data = d, d[,j] ~ Marker)
+			p <- summary(mm)$coefficients["Marker",4]
+			p_vals[paste("p_", names(test_pheno[j]), sep="")] <- p
+		}
+		plot_df <- rbind(plot_df, p_vals)
+		
 		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)
 		
 		#p_val <- summary(marker_model)$coefficients["Marker",4]
 		#plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))
-		plot_df <- rbind(plot_df, data.frame(id = c, p_Awn = p_awn, p_Height = p_height, p_HeadingDay = p_hd))
 	}
 }
-manhattan_plot("Awn GWAS", plot_df[,c("id", "p_Awn")]))
-ggsave(paste("output/", "Awn_GWAS", ".png", sep=""), plot=last_plot())
-#write_csv(plot_df, "output/SunRILs_awn_gwasOutput_2022.csv")
-manhattan_plot("Height GWAS", plot_df[,c("id", "p_Height")]))
-manhattan_plot("Days to Head GWAS", plot_df[,c("id", "p_HeadingDay")]))
 
+manhattan_plot <- function(graph_name, SNP, p_value) {
+	dataframe <- data.frame(id = SNP, p = p_value)
+	dataframe$LOG <- -log10(dataframe$p)
+	dataframe$chr <- str_replace(str_replace(dataframe$id, "^S", ""), "_\\d*$", "")
+	dataframe$pos <- as.numeric(str_replace(dataframe$id, "^S\\d[ABD]_", ""))
+	dataframe$FDR <- p.adjust(dataframe$p, method = "fdr")
+	dataframe$bon <- p.adjust(dataframe$p, method = "bonferroni")
+	#plot out model
+	manhattan(dataframe, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = graph_name)
+	abline(h = 5.6, col = "#659157")
+}
+
+manhattan_plot("Awn GWAS", plot_df$id, plot_df$p_Awns)
+#ggsave(paste("output/", "Awn_GWAS", ".png", sep=""), plot=last_plot())
+#write_csv(plot_df, "output/SunRILs_awn_gwasOutput_2022.csv")
+manhattan_plot("Height GWAS", plot_df$id, plot_df$p_Height)
+manhattan_plot("Days to head GWAS", plot_df$id, plot_df$p_days_to_head)
+
+
+
+
+
+
+
+
+
+
+
+
+
+#------------Hopefully don't need anymore from here down------------#
 ###Incredibly janky filtering for matrix work, makes model run but results aren't great looking
 matrix_df_ind <- data.frame()
 #matrix by individual IN family, works better than by family

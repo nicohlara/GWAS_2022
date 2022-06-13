@@ -9,8 +9,9 @@
 library(tidyverse)
 library(gaston)
 library(rrBLUP)
-#install.packages("lme4")
-library(lme4)
+install.packages("lmerTest")
+#library(lme4)
+library(lmerTest)
 
 #set working directory
 setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
@@ -104,7 +105,6 @@ sunMTest <- sunM[sample(c(1:nrow(sunM)), 1000), sample(c(1:ncol(sunM)), 5000)]
 sunGRMTest <- A.mat(sunMTest)
 heatmap(sunGRMTest, symm = T)
 
-
 ###CLEAN UP PHENOTYPIC DATA FOR COMBINING WITH GENOTYPE
 #check for duplication and lack of replication
 genoCounts <- group_by(t_ph, Entry) %>% count() %>% ungroup()
@@ -121,7 +121,6 @@ t_ph_group <- filter(t_ph_group, !(Entry %in% single_crossLines))
 t_ph_group <- as.data.frame(t_ph_group)
 #rownames(t_ph_group) <- t_ph_group$Entry
 
-
 ###SYNCING UP GENOTYPE AND PHENOTYPE DATA
 #process to sync up phenotype and genotype files
 sunVCF_sync <- select.inds(sunVCF, id %in% t_ph_group$Entry)
@@ -131,7 +130,9 @@ t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
 #plot_df <- data.frame(id = character(), p = numeric())
 plot_df <- data.frame()
 test_pheno <- t_ph_group
-for (i in c(1:length(sunVCF_sync@snps$id))) {
+len <- length(sunVCF_sync@snps$id
+for (i in c(1:len))) {
+	print((i/len)*100, %)
 	a <- as.matrix(sunVCF_sync[,i])
 	b <- data.frame(Entry = rownames(a), Marker = as.vector(a[,1]))
 	c <- colnames(a)
@@ -139,14 +140,17 @@ for (i in c(1:length(sunVCF_sync@snps$id))) {
 		d <- merge(test_pheno,b, by="Entry")
 		p_vals <- data.frame(id = c)
 		for (j in c(4:length(test_pheno[1,]))) {
-			mm <- lm(data = d, d[,j] ~ Marker)
-			p <- summary(mm)$coefficients["Marker",4]
+			###STATISTICAL TESTS
+			#VERY BASIC LINEAR TEST
+			#mm <- lm(data = d, d[,j] ~ Marker)
+			#p <- summary(mm)$coefficients["Marker",4]
+			#TREATING LOCATION AND FAMILY RANDOM EFFECTS, takes a while to run
+			mm <- suppressMessages(lmer(data = d, d[,j] ~ Marker + (1|Location) + (1|Cross_ID)))
+			p <- anova(mm)["Marker",6]
 			p_vals[paste("p_", names(test_pheno[j]), sep="")] <- p
 		}
 		plot_df <- rbind(plot_df, p_vals)
-		
 		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)
-		
 		#p_val <- summary(marker_model)$coefficients["Marker",4]
 		#plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))
 	}
@@ -165,7 +169,7 @@ manhattan_plot <- function(graph_name, SNP, p_value) {
 }
 
 manhattan_plot("Awn GWAS", plot_df$id, plot_df$p_Awns)
-#ggsave(paste("output/", "Awn_GWAS", ".png", sep=""), plot=last_plot())
+ggsave(paste("output/", "Awn_GWAS", ".png", sep=""), plot=last_plot())
 #write_csv(plot_df, "output/SunRILs_awn_gwasOutput_2022.csv")
 manhattan_plot("Height GWAS", plot_df$id, plot_df$p_Height)
 manhattan_plot("Days to head GWAS", plot_df$id, plot_df$p_days_to_head)

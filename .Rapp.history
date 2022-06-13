@@ -75,15 +75,36 @@ sunVCF@ped$id <- gsub("-A+", "", sunVCF@ped$id)#
 sunVCF@ped$id <- gsub("-NEG", "", sunVCF@ped$id)#
 #filter for resequenced and duplicated lines#
 sunVCF <- select.inds(sunVCF, !grepl("-A-", id))#
-sunVCF <- select.inds(sunVCF, !duplicated(id))
-genoCounts <- group_by(t_ph, Entry) %>% count()#
+sunVCF <- select.inds(sunVCF, !duplicated(id))#
+#
+###CHECK DATA TO ENSURE RELATIVE NORMALITY#
+#Phenotypic data#
+hist(as.numeric(t_ph$WDR), main="Winter dormancy release 2022")#
+hist(as.numeric(days), breaks = 40, main = "Flowering date 2022")#
+hist(as.numeric(t_ph$Powdery_mildew), main="Powdery mildew 2022")#
+hist(as.numeric(t_ph$SNB), main="Septoria nodorum blotch 2022")#
+hist(t_ph$Height, main="Height")#
+#location testing#
+sum(t_ph$Location=="Kinston")#
+sum(t_ph$Location=="Raleigh")#
+#Perform ANOVA to look at variation in heading date#
+anova(lm(data = t_ph, days_to_head ~ Location + Cross_ID + Location:Cross_ID))#
+anova(lm(data = t_ph, Height ~ Location + Cross_ID + Location:Cross_ID))#
+#Genotypic data#
+#check family structure using heatmap#
+sunMTest <- sunM[sample(c(1:nrow(sunM)), 1000), sample(c(1:ncol(sunM)), 5000)]#
+sunGRMTest <- A.mat(sunMTest)#
+heatmap(sunGRMTest, symm = T)#
+###CLEAN UP PHENOTYPIC DATA FOR COMBINING WITH GENOTYPE#
+#check for duplication and lack of replication#
+genoCounts <- group_by(t_ph, Entry) %>% count() %>% ungroup()#
 parLines <- filter(genoCounts, n > 10)$Entry#
 single_crossLines <- filter(genoCounts, 1 == n)$Entry#
 crossLines <- filter(genoCounts, n == 2 )$Entry#
 multi_crossLines <- filter(genoCounts, 2 < n & 10 > n )$Entry #
 #
 #since we have 23 lines with more than 1 replicate at each location, we average them#
-t_ph_group <- t_ph %>% group_by(Location, Cross_ID, Awns, Entry) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height))#
+t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns)) %>% ungroup() %>% mutate(loc_fam = paste(Location, Cross_ID, sep="_"))#
 #filter out any unreplicated lines#
 t_ph_group <- filter(t_ph_group, !(Entry %in% single_crossLines))#
 t_ph_group <- as.data.frame(t_ph_group)#
@@ -96,226 +117,172 @@ t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)#
 ###CREATE BASIC MODEL FOR MANHATTAN PLOT#
 plot_df <- data.frame(id = character(), p = numeric())#
 test_pheno <- t_ph_group
-i <- 3
-a <- as.matrix(sunVCF_sync[,i])
-b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
-	c <- colnames(a)#
-	test_pheno <- merge(test_pheno,b)
-marker_model <- lmer(Height ~ Marker + (1|Location) + (1|Cross_ID), data = test_pheno)
-head(marker_model)
-summary(marker_model)
-anova(marker_model)
-summary(anova(marker_model))
-summary(aov(marker_model))
-aov(marker_model)
-summary(marker_model)
-anova(marker_model)
-summary(marker_model)[[1]]
-summary(marker_model)["Fixed effects"]
-summary(marker_model)[["Fixed effects"]]
-head(test_pheno)
-t_ph
-head(t_ph)
-length(t_ph$Entry)
-length(t_ph_group$Entry)
-t_ph_group <- t_ph %>% group_by(Location, Cross_ID, Awns, Entry) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height))
-length(t_ph_group$Entry)
-t_ph_group <- t_ph %>% ungroup()
-length(t_ph_group$Entry)
-t_ph_group <- t_ph %>% group_by(Location, Cross_ID, Awns, Entry) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height)) %>% ungroup()
-length(t_ph_group$Entry)
-t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID, Awns) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height)) %>% ungroup()
-length(t_ph_group$Entry)
-head(t_ph_group)
-t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns)) %>% ungroup()
-head(t_ph_group)
-length(t_ph_group$Entry)
-genoCounts <- group_by(t_ph, Entry) %>% count()
-parLines <- filter(genoCounts, n > 10)$Entry
-single_crossLines <- filter(genoCounts, 1 == n)$Entry
-crossLines <- filter(genoCounts, n == 2 )$Entry
-multi_crossLines <- filter(genoCounts, 2 < n & 10 > n )$Entry
-genoCounts
-parLines
-single_crossLines
-length(crossLines)
-multi_crossLines
-length(t_ph)
-length(t_p$Entry)
-length(t_ph$Entry)
-length(t_ph_group$Entry)
-59*13
-genoCounts <- group_by(t_ph, Entry) %>% count() %>% ungroup()
-t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns)) %>% ungroup()
-t_ph_group <- filter(t_ph_group, !(Entry %in% single_crossLines))
-t_ph_group <- as.data.frame(t_ph_group)
-sunVCF_sync <- select.inds(sunVCF, id %in% t_ph_group$Entry)
-t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
-plot_df <- data.frame(id = character(), p = numeric())#
-test_pheno <- t_ph_group
-length(t_ph_group)
-length(t_ph_group$Entry)
-length(unique(t_ph_group$Entry))
-length(unique(t_ph_group$Cross_ID))
-group_by(t_ph_group, Cross_ID) %>% count() %>% ungroup()
-i <- 3
-a <- as.matrix(sunVCF_sync[,i])#
-	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
-	c <- colnames(a)#
-	test_pheno <- merge(test_pheno,b)
-marker_model <- lmer(Height ~ Marker + (1|Location) + (1|Cross_ID), data = test_pheno)
-summary(aov(marker_model))
-anova(marker_model)
-summary(marker_model)
-t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns)) %>% ungroup() %>% mutate(loc_fam = Location, Cross_ID, sep="_")
-head(t_ph_group)
-t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns)) %>% ungroup() %>% mutate(loc_fam == Location, Cross_ID, sep="_")
-t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns)) %>% ungroup() %>% mutate(loc_fam = paste(Location, Cross_ID, sep="_"))
-head(t_ph_group)
-t_ph_group <- filter(t_ph_group, !(Entry %in% single_crossLines))
-t_ph_group <- as.data.frame(t_ph_group)
-sunVCF_sync <- select.inds(sunVCF, id %in% t_ph_group$Entry)#
-t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
-a <- as.matrix(sunVCF_sync[,i])#
-	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
-	c <- colnames(a)#
-	test_pheno <- merge(test_pheno,b)
-head(t_ph_group)
-length(t_ph_group$Entry)
-a <- as.matrix(sunVCF_sync[,i])
-head(a)
-length(a[,1])
-b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))
-c <- colnames(a)
-test_pheno <- merge(test_pheno,b)
-help(merge)
-test_pheno <- merge(test_pheno,b, by="Entry")
-head(test_pheno)
-test_pheno <- t_ph_group
-head(test_pheno)
-test_pheno <- merge(test_pheno,b)
-head(test_pheno)
-marker_model <- lmer(Height ~ Marker + (1|Location) + (1|Cross_ID), data = test_pheno)
-marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)
-anova(marker_model)
-marker_model <- lmer(Height ~ Marker + (loc_fam), data = test_pheno)
-head(marker_model)
-summary(marker_model)
-unique(test_pheno$Marker)
-test_pheno <- t_ph_group
-d <- merge(test_pheno,b)
-plot_df <- data.frame(id = character(), p = numeric())
-test_pheno <- t_ph_group
-i <- 3
-a <- as.matrix(sunVCF_sync[,i])#
-	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
-	c <- colnames(a)#
-	d <- merge(test_pheno,b)
-marker_model <- lm(data = d, Height ~ Marker + loc_fam)
-summary(marker_model)
-marker_model <- lm(data = d, Height ~ Marker + (Location*Cross_ID))
-p_val <- summary(marker_model)#$coefficients["geno_data",4]
-p_val
-p_val <- summary(marker_model)$coefficients["geno_data",4]
-p_val <- summary(marker_model)$coefficients["Marker",4]
-p_val
-marker_model <- lm(data = d, Height ~ Marker * (Location*Cross_ID))
-p_val <- summary(marker_model)$coefficients["Marker",4]
-p_val
-summary(marker_model)
-for (i in c(1:length(sunVCF_sync@snps$id))) {#
-	a <- as.matrix(sunVCF_sync[,i])#
-	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
-	c <- colnames(a)#
-	d <- merge(test_pheno,b)#
-	if (length(unique(unlist(geno_data[,1]))) > 1) {#
-		marker_model <- lm(data = d, Height ~ Marker * (Location*Cross_ID))#
-		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)#
-		p_val <- summary(marker_model)$coefficients["Marker",4]#
-		#summary(aov(marker_model))#
-		plot_df <- rbind(plot_df, data.frame(id = colnames(geno_data), p = p_val))#
-	}#
-}#
-manhattan_plot("Test", plot_df)
-manhattan_plot <- function(graph_name, dataframe) {#
-	dataframe$LOG <- -log10(dataframe$p)#
-	dataframe$chr <- str_replace(str_replace(dataframe$id, "^S", ""), "_\\d*$", "")#
-	dataframe$pos <- as.numeric(str_replace(dataframe$id, "^S\\d[ABD]_", ""))#
-	dataframe$FDR <- p.adjust(dataframe$p, method = "fdr")#
-	dataframe$bon <- p.adjust(dataframe$p, method = "bonferroni")#
-	#plot out model#
-	manhattan(dataframe, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = graph_name)#
-	abline(h = 5.6, col = "#659157")#
-}
-for (i in c(1:length(sunVCF_sync@snps$id))) {#
-	a <- as.matrix(sunVCF_sync[,i])#
-	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
-	c <- colnames(a)#
-	d <- merge(test_pheno,b)#
-	if (length(unique(unlist(geno_data[,1]))) > 1) {#
-		marker_model <- lm(data = d, Height ~ Marker * (Location*Cross_ID))#
-		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)#
-		p_val <- summary(marker_model)$coefficients["Marker",4]#
-		#summary(aov(marker_model))#
-		plot_df <- rbind(plot_df, data.frame(id = colnames(geno_data), p = p_val))#
-	}#
-}#
-manhattan_plot("Test", plot_df)
 head(plot_df)
-for (i in c(1:length(sunVCF_sync@snps$id))) {#
-	a <- as.matrix(sunVCF_sync[,i])#
-	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
-	c <- colnames(a)#
-	d <- merge(test_pheno,b)#
-	if (length(unique(unlist(geno_data[,1]))) > 1) {#
-		marker_model <- lm(data = d, Height ~ Marker * (Location*Cross_ID))#
-		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)#
-		p_val <- summary(marker_model)$coefficients["Marker",4]#
-		#summary(aov(marker_model))#
-		plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))#
-	}#
-}#
-manhattan_plot("Test", plot_df)
-head(plot_df)
-plot_df <- data.frame(id = character(), p = numeric())
-head(plot_df)
-i
-i <- 3
-i
-a <- as.matrix(sunVCF_sync[,i])#
-	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
-	c <- colnames(a)
-c
-d <- merge(test_pheno,b)
-marker_model <- lm(data = d, Height ~ Marker * (Location*Cross_ID))
-p_val <- summary(marker_model)$coefficients["Marker",4]
-plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))
-head(plot_df)
-for (i in c(1:length(sunVCF_sync@snps$id))) {#
-	a <- as.matrix(sunVCF_sync[,i])#
-	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
-	c <- colnames(a)#
-	d <- merge(test_pheno,b)#
-	if (length(unique(unlist(d$Marker[,1]))) > 1) {#
-		marker_model <- lm(data = d, Height ~ Marker * (Location*Cross_ID))#
-		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)#
-		p_val <- summary(marker_model)$coefficients["Marker",4]#
-		#summary(aov(marker_model))#
-		plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))#
-	}#
-}
-head(d)
-head(d$Marker)
-for (i in c(1:length(sunVCF_sync@snps$id))) {#
+head(test_pheno)
+length(sunVCF_sync@snps$id)
+dim(sunVCF_sync)
+length(test_pheno$Entry)
+621*2
+for (i in c(1:100))) {#
+	print(i)#
 	a <- as.matrix(sunVCF_sync[,i])#
 	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
 	c <- colnames(a)#
 	d <- merge(test_pheno,b)#
 	if (length(unique(d$Marker)) > 1) {#
-		marker_model <- lm(data = d, Height ~ Marker * (Location*Cross_ID))#
+		marker_model <- lm(data = d, Height ~ Marker) #* (Location + Cross_ID))#
 		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)#
+		#marker_model <- lm(data = test_pheno, days_to_head ~ Marker * (Location + Cross_ID + Location:Cross_ID))#
 		p_val <- summary(marker_model)$coefficients["Marker",4]#
 		#summary(aov(marker_model))#
+		plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))#
+	}#
+}
+for (i in c(1:100)) {#
+	print(i)#
+	a <- as.matrix(sunVCF_sync[,i])#
+	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
+	c <- colnames(a)#
+	d <- merge(test_pheno,b)#
+	if (length(unique(d$Marker)) > 1) {#
+		marker_model <- lm(data = d, Height ~ Marker) #* (Location + Cross_ID))#
+		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)#
+		#marker_model <- lm(data = test_pheno, days_to_head ~ Marker * (Location + Cross_ID + Location:Cross_ID))#
+		p_val <- summary(marker_model)$coefficients["Marker",4]#
+		#summary(aov(marker_model))#
+		plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))#
+	}#
+}
+head(plot_df)
+plotdf
+plot_df
+for (i in c(1:100)) {#
+	print(i)#
+	a <- as.matrix(sunVCF_sync[,i])#
+	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
+	c <- colnames(a)#
+	d <- merge(test_pheno,b)#
+	print(unique(d$Marker))#
+	if (length(unique(d$Marker)) > 4) {#
+		marker_model <- lm(data = d, Height ~ Marker) #* (Location + Cross_ID))#
+		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)#
+		#marker_model <- lm(data = test_pheno, days_to_head ~ Marker * (Location + Cross_ID + Location:Cross_ID))#
+		p_val <- summary(marker_model)$coefficients["Marker",4]#
+		#summary(aov(marker_model))#
+		plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))#
+	}#
+}
+i <- 3
+print(i)
+a <- as.matrix(sunVCF_sync[,i])
+b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))
+c <- colnames(a)
+d <- merge(test_pheno,b)
+head(c)
+head(b)
+unique(b)
+length(unique(b$Marker))
+marker_model <- lm(data = d, Height ~ Marker) #* (Location + Cross_ID))
+p_val <- summary(marker_model)$coefficients["Marker",4]
+print(p_val)
+marker_model
+summary(marker_model)
+marker_model <- lm(data = d, Height ~ Marker * (Location + Cross_ID))
+p_val <- summary(marker_model)$coefficients["Marker",4]
+print(p_val)
+summary(marker_model)
+head(test_pheno)
+unique(test_pheno$Awns)
+marker_model <- lm(data = d, Awns ~ Marker * (Location + Cross_ID))
+marker_model <- lm(data = d, Awns ~ Marker * loc_fam)
+head(marker_model)
+marker_model
+marker_model <- lm(data = d, Awns ~ Marker * (Location + Cross_ID))
+marker_model
+summary(marker_model)
+matrix_df_fam <- data.frame()#
+rand_cross_id <- sample(unique(t_ph_group$Cross_ID), length(unique(t_ph_group$Cross_ID))/2)#
+matrix_df_fam <- filter(t_ph_group, (Cross_ID %in% rand_cross_id & Location == "Kinston") | (!(Cross_ID %in% rand_cross_id) & (Location == "Raleigh")))#
+rownames(matrix_df_fam) <- matrix_df_fam$Entry#
+#hist(t_ph_group$days_to_head)#
+###MAKE AND SHOW MODELS#
+#make covariate model#
+#familyLocCov <- model.matrix(~ Location + Entry, t_ph_group)#
+#familyLocCov <- model.matrix(~gsub("-\\d*$", "", t_ph_group$Entry) + t_ph_group$Location)#
+#testGWAS <- association.test(sunVCF_sync, t_ph_group$days_to_head, X = familyLocCov)#
+###USING RANDOMLY FILTERED INDIVIDUAL MODEL#
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df_ind)#
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df_ind$Entry) + matrix_df_ind$Location)#
+testGWAS_ind <- association.test(sunVCF_sync, matrix_df_ind$days_to_head, X = familyLocCov)
+matrix_df_ind <- data.frame()#
+#matrix by individual IN family, works better than by family#
+for (i in unique(t_ph_group$Cross_ID)) {#
+	a <- filter(t_ph_group, Cross_ID == i)#
+	b <- sample(unique(a$Entry), length(unique(a$Entry))/2)#
+	df <- filter(a, (Entry %in% b & Location == "Kinston") | (!(Entry %in% b) & !(Location == "Kinston")))#
+	matrix_df_ind <- rbind(matrix_df_ind, df)#
+}
+familyLocCov <- model.matrix(~ Location + Entry, matrix_df_ind)
+familyLocCov <- model.matrix(~gsub("-\\d*$", "", matrix_df_ind$Entry) + matrix_df_ind$Location)
+testGWAS_ind <- association.test(sunVCF_sync, matrix_df_ind$days_to_head, X = familyLocCov)
+testGWAS_ind
+head(testGWAS_ind)
+help(association.test)
+help(lm)
+summary(marker_model)
+marker_model <- lm(data = d, Awns ~ Marker + Cross_ID)
+summary(marker_model)
+marker_model$F-statistic
+marker_model$Fstatistic
+marker_model$Fstatistic[1]
+marker_model$fstatistic[1]
+marker_model$fstatistic
+summary(marker_model)$fstatistic
+pf(x$fstatistic[1],x$fstatistic[2],x$fstatistic[3],lower.tail=FALSE)
+x <- summary(marker_model)
+pf(x$fstatistic[1],x$fstatistic[2],x$fstatistic[3],lower.tail=FALSE)
+x
+x$fstatistic[4]
+x$fstatistic[3]
+pf(x$fstatistic[1],x$fstatistic[2],x$fstatistic[3])
+x$fstatistic[2]
+pf(x$fstatistic[1],x$fstatistic[2],x$fstatistic[3])
+pf(x$fstatistic[1],x$fstatistic[2],x$fstatistic[3], lower.tail=FALSE)
+p_val <- summary(marker_model) %>% pf(fstatistic[1],fstatistic[2],fstatistic[3], lower.tail=FALSE)
+-log(0)
+-log(2e-16)
+-log(2.2e-16)
+#for (i in c(1:length(sunVCF_sync@snps$id))) {#
+for (i in c(1000:1100)) {#
+	print(i)#
+	a <- as.matrix(sunVCF_sync[,i])#
+	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
+	c <- colnames(a)#
+	if (length(unique(b$Marker)) > 1) {#
+		d <- merge(test_pheno,b)#
+		marker_model <- lm(data = d, Awns ~ Marker + Cross_ID)#
+		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)#
+		#marker_model <- lm(data = test_pheno, days_to_head ~ Marker * (Location + Cross_ID + Location:Cross_ID))#
+		p_val <- summary(marker_model)$coefficients["Marker",4]#
+		print(p_val)#
+		#summary(aov(marker_model))#
+		plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))#
+	}#
+}
+plot_df
+summary(aov(marker_model))
+for (i in c(1000:2000)) {#
+	print(i)#
+	a <- as.matrix(sunVCF_sync[,i])#
+	b <- data.frame(Entry = a[,0], Marker = as.vector(a[,1]))#
+	c <- colnames(a)#
+	if (length(unique(b$Marker)) > 1) {#
+		d <- merge(test_pheno,b)#
+		marker_model <- lm(data = d, Awns ~ Marker + Cross_ID)#
+		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)#
+		p_val <- summary(marker_model)$coefficients["Marker",4]#
+		print(p_val)#
+		summary(aov(marker_model))#
 		plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))#
 	}#
 }

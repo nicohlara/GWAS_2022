@@ -155,10 +155,18 @@ for (i in c(1:length(sunVCF_sync@snps$id))) {
 		plot_df <- rbind(plot_df, data.frame(id = c, p_Awn = p_awn, p_Height = p_height, p_HeadingDay = p_hd))
 	}
 }
-manhattan_plot("Awn GWAS", plot_df[,c("id", "p_Awn")]))
+
+awn_plot <- plot_df[,c("id", "p_Awn")]
+names(awn_plot)[names(awn_plot) == "p_Awn"] <- "p"
+
+manhattan_plot("Awn GWAS", awn_plot)
 ggsave(paste("output/", "Awn_GWAS", ".png", sep=""), plot=last_plot())
+
 #write_csv(plot_df, "output/SunRILs_awn_gwasOutput_2022.csv")
-manhattan_plot("Height GWAS", plot_df[,c("id", "p_Height")]))
+height_plot <- plot_df[,c("id", "p_Height")]
+names(awn_plot)[names(awn_plot) == "p_Awn"] <- "p"
+manhattan_plot("Height GWAS", plot_df[,c("id", "p_Height")])
+
 manhattan_plot("Days to Head GWAS", plot_df[,c("id", "p_HeadingDay")]))
 
 ###Incredibly janky filtering for matrix work, makes model run but results aren't great looking

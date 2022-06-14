@@ -164,15 +164,52 @@ manhattan_plot <- function(graph_name, SNP, p_value) {
 	dataframe$FDR <- p.adjust(dataframe$p, method = "fdr")
 	dataframe$bon <- p.adjust(dataframe$p, method = "bonferroni")
 	#plot out model
+	png(filename = paste('output/', graph_name, '.png', sep=""))
 	manhattan(dataframe, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = graph_name)
 	abline(h = 5.6, col = "#659157")
+	#dev.print(width = 6, height = 3, png, paste('output/', graph_name, '.png', sep=""))
+	dev.off()
 }
 
+
 manhattan_plot("Awn GWAS", plot_df$id, plot_df$p_Awns)
-ggsave(paste("output/", "Awn_GWAS", ".png", sep=""), plot=last_plot())
-#write_csv(plot_df, "output/SunRILs_awn_gwasOutput_2022.csv")
 manhattan_plot("Height GWAS", plot_df$id, plot_df$p_Height)
 manhattan_plot("Days to head GWAS", plot_df$id, plot_df$p_days_to_head)
+
+
+manplot <- ggplot(dataframe, aes(x = id, y = LOG), color = as_factor(chr)) #+
+	#geom_hline(yintercept = 5.6, color = "#659157" ) + 
+	#geom_point(alpha=0.75) +
+	#scale_color_manual(values = rep(c("#659157", "#69A2B0", "#FFCAB1"))) +
+	#theme(legend.position = "none")
+manplot
+
+
+manhplot <- ggplot(gwas_data, aes(x = bp_cum, y = -log10(p), 
+                                  color = as_factor(chr), size = -log10(p))) +
+  geom_hline(yintercept = -log10(sig), color = "grey40", linetype = "dashed") + 
+  geom_point(alpha = 0.75) +
+  scale_x_continuous(label = axis_set$chr, breaks = axis_set$center) +
+  scale_y_continuous(expand = c(0,0), limits = c(0, ylim)) +
+  scale_color_manual(values = rep(c("#276FBF", "#183059"), unique(length(axis_set$chr)))) +
+  scale_size_continuous(range = c(0.5,3)) +
+  labs(x = NULL, 
+       y = "-log<sub>10</sub>(p)") + 
+  theme_minimal() +
+  theme( 
+    legend.position = "none",
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank(),
+    axis.title.y = element_markdown(),
+    axis.text.x = element_text(angle = 60, size = 8, vjust = 0.5)
+  )
+
+
+
+
+
+ggsave("Users/nico/Documents/GitHub/GWAS_2022/output/Days_to_head_GWAS.png")
+write_csv(plot_df, "output/SunRILs_gwasOutput_2022.csv")
 
 
 

@@ -2,14 +2,13 @@
 #Locations: Kinston and Midpines, NC
 #Created by Nicolas A. H. Lara
 #Created modelled after code written by Noah Dewitt in 2021
-#Last edit: 2022-5-26
+#Last edit: 2022-6-14
 
 #Load in packages
-
 library(tidyverse)
 library(gaston)
 library(rrBLUP)
-install.packages("lmerTest")
+#install.packages("lmerTest")
 #library(lme4)
 library(lmerTest)
 
@@ -71,6 +70,7 @@ write.table(t_ph, file='output/all_phenotypes.tsv', quote=FALSE, sep='\t', row.n
 #Awn testing
 awn_vector <- ifelse(t_ph$Awns=="+", 1,0)
 t_ph$Awns <- awn_vector
+colnames(t_ph)
 
 ###READ IN IMPUTED VCF FILE, CLEAN UP DATA
 sunVCF <- read.vcf("data/SunRILs_2021_postimp_filt.vcf.gz", convert.chr = F)
@@ -114,7 +114,7 @@ crossLines <- filter(genoCounts, n == 2 )$Entry
 multi_crossLines <- filter(genoCounts, 2 < n & 10 > n )$Entry 
 
 #since we have 23 lines with more than 1 replicate at each location, we average them
-t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns)) %>% ungroup()
+t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns), WDR = mean(as.numeric(WDR)), Powdery_mildew= mean(as.numeric(Powdery_mildew))) %>% ungroup()
 # %>% mutate(loc_fam = paste(Location, Cross_ID, sep="_"))
 #filter out any unreplicated lines
 t_ph_group <- filter(t_ph_group, !(Entry %in% single_crossLines))
@@ -129,17 +129,16 @@ t_ph_group <- filter(t_ph_group, Entry %in% sunVCF_sync@ped$id)
 ###CREATE BASIC MODEL FOR MANHATTAN PLOT
 #plot_df <- data.frame(id = character(), p = numeric())
 plot_df <- data.frame()
-test_pheno <- t_ph_group
-len <- length(sunVCF_sync@snps$id
-for (i in c(1:len))) {
-	print((i/len)*100, %)
+len <- length(sunVCF_sync@snps$id)
+for (i in c(1:len)) {
+	print(paste(round((i/len)*100, digits=2), "%", sep=""))
 	a <- as.matrix(sunVCF_sync[,i])
 	b <- data.frame(Entry = rownames(a), Marker = as.vector(a[,1]))
 	c <- colnames(a)
 	if (length(unique(b$Marker)) > 1) {
-		d <- merge(test_pheno,b, by="Entry")
+		d <- merge(t_ph_group,b, by="Entry")
 		p_vals <- data.frame(id = c)
-		for (j in c(4:length(test_pheno[1,]))) {
+		for (j in c(4:length(t_ph_group[1,]))) {
 			###STATISTICAL TESTS
 			#VERY BASIC LINEAR TEST
 			#mm <- lm(data = d, d[,j] ~ Marker)
@@ -147,14 +146,13 @@ for (i in c(1:len))) {
 			#TREATING LOCATION AND FAMILY RANDOM EFFECTS, takes a while to run
 			mm <- suppressMessages(lmer(data = d, d[,j] ~ Marker + (1|Location) + (1|Cross_ID)))
 			p <- anova(mm)["Marker",6]
-			p_vals[paste("p_", names(test_pheno[j]), sep="")] <- p
+			p_vals[paste("p_", names(t_ph_group[j]), sep="")] <- p
 		}
 		plot_df <- rbind(plot_df, p_vals)
-		#marker_model <- lmer(Height ~ Marker + (1|loc_fam), data = test_pheno)
-		#p_val <- summary(marker_model)$coefficients["Marker",4]
 		#plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))
 	}
 }
+
 
 manhattan_plot <- function(graph_name, SNP, p_value) {
 	dataframe <- data.frame(id = SNP, p = p_value)
@@ -163,53 +161,37 @@ manhattan_plot <- function(graph_name, SNP, p_value) {
 	dataframe$pos <- as.numeric(str_replace(dataframe$id, "^S\\d[ABD]_", ""))
 	dataframe$FDR <- p.adjust(dataframe$p, method = "fdr")
 	dataframe$bon <- p.adjust(dataframe$p, method = "bonferroni")
+	significant_markers <- filter(dataframe, bon < .05)
+	print(head(sigMarkers))
 	#plot out model
-	png(filename = paste('output/', graph_name, '.png', sep=""))
+	par(cex = 1.5, cex.main = 1.5, pch = 1, lwd=3, mai = c(4,4,3,1))
 	manhattan(dataframe, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = graph_name)
 	abline(h = 5.6, col = "#659157")
-	#dev.print(width = 6, height = 3, png, paste('output/', graph_name, '.png', sep=""))
-	dev.off()
+	return(significant_markers)
 }
 
+sigMarkers <- data.frame()
+for (i in c(2:length(plot_df[1,]))) {
+	name <- substring(names(plot_df[i]), 3)
+	print(name)
+	png(width=2500, height=1500, pointsize = 36, filename = paste('output/plots/', name, '.png', sep=""))
+	sig_m <- manhattan_plot(name, plot_df$id, plot_df[,i])
+	dev.off()
+	sig_m$trait <- name
+	sigMarkers <- rbind(sigMarkers, sig_m)
+}
 
-manhattan_plot("Awn GWAS", plot_df$id, plot_df$p_Awns)
-manhattan_plot("Height GWAS", plot_df$id, plot_df$p_Height)
-manhattan_plot("Days to head GWAS", plot_df$id, plot_df$p_days_to_head)
+###Export all significant markers along with their associated trait
+write_csv(sigMarkers, "output/SunRILs_gwas_sig_markers_2022.csv")
 
 
-manplot <- ggplot(dataframe, aes(x = id, y = LOG), color = as_factor(chr)) #+
-	#geom_hline(yintercept = 5.6, color = "#659157" ) + 
-	#geom_point(alpha=0.75) +
-	#scale_color_manual(values = rep(c("#659157", "#69A2B0", "#FFCAB1"))) +
-	#theme(legend.position = "none")
-manplot
-
-
-manhplot <- ggplot(gwas_data, aes(x = bp_cum, y = -log10(p), 
-                                  color = as_factor(chr), size = -log10(p))) +
-  geom_hline(yintercept = -log10(sig), color = "grey40", linetype = "dashed") + 
-  geom_point(alpha = 0.75) +
-  scale_x_continuous(label = axis_set$chr, breaks = axis_set$center) +
-  scale_y_continuous(expand = c(0,0), limits = c(0, ylim)) +
-  scale_color_manual(values = rep(c("#276FBF", "#183059"), unique(length(axis_set$chr)))) +
-  scale_size_continuous(range = c(0.5,3)) +
-  labs(x = NULL, 
-       y = "-log<sub>10</sub>(p)") + 
-  theme_minimal() +
-  theme( 
-    legend.position = "none",
-    panel.grid.major.x = element_blank(),
-    panel.grid.minor.x = element_blank(),
-    axis.title.y = element_markdown(),
-    axis.text.x = element_text(angle = 60, size = 8, vjust = 0.5)
-  )
+#manhattan_plot("Awn GWAS", plot_df$id, plot_df$p_Awns)
+#manhattan_plot("Height GWAS", plot_df$id, plot_df$p_Height)
+#manhattan_plot("Days to head GWAS", plot_df$id, plot_df$p_days_to_head)
 
 
 
-
-
-ggsave("Users/nico/Documents/GitHub/GWAS_2022/output/Days_to_head_GWAS.png")
-write_csv(plot_df, "output/SunRILs_gwasOutput_2022.csv")
+#write_csv(plot_df, "output/SunRILs_gwasOutput_2022.csv")
 
 
 
@@ -290,20 +272,3 @@ manhattan(testGWAS, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = "SunR
 abline(h = 5.6, col = "#659157")
 
 #Export significant markers for heading date
-sigMarkers <- filter(testGWAS, bon < .05)
-write_csv(sigMarkers, "output/SunRILs_heading_days_gwasOutput_2022.csv")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

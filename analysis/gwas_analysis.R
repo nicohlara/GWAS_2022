@@ -2,23 +2,33 @@
 #Locations: Kinston and Midpines, NC
 #Created by Nicolas A. H. Lara
 #Created modelled after code written by Noah Dewitt in 2021
-#Last edit: 2022-6-14
+#Last edit: 2022-7-8
+
+install.packages("tidyverse")
+install.packages("gaston")
+##install.packages("rrBLUP")
+install.packages("lmerTest")
 
 #Load in packages
 library(tidyverse)
 library(gaston)
-library(rrBLUP)
+#library(rrBLUP)
 #install.packages("lmerTest")
 #library(lme4)
 library(lmerTest)
 
 #set working directory
 setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
+###READ IN IMPUTED VCF FILE, CLEAN UP DATA
+#sunVCF <- read.vcf("data/SunRILs_2021_postimp_filt.vcf.gz", convert.chr = F)
+sunVCF <- read.vcf("/Volumes/Nico/Grad_School/genomic_data/SunRILs/SunRILs_combGenos_fakeHeader_imp.vcf.gz")
 
 ###READ IN PHENOTYPE FILE, CLEAN COLUMN NAMES, COMBINE LOCATIONS
 #K22_pheno <- read.delim("data/Kin22-SunRils-T1-T30 Final.xlsx - 2022-05-12-11-55-18_Kin22-SunRi.csv", sep=",")
 K22_pheno <- read.delim("data/Kin22-SunRils-T1-T30.csv", sep=",")
 R22_pheno <- read.delim("data/R22-SunRil-T1-30.csv", sep=",")
+K22_SpS <- read.delim("data/SpS_data.xlsx - Kinston.csv", sep=",")
+R22_SpS <- read.delim("data/SpS_data.xlsx - Raleigh.csv", sep=",")
 #clean up dataframes, rename columns
 header.true <- function(df) {
   names(df) <- as.character(unlist(df[1,]))
@@ -45,13 +55,22 @@ K22_pheno["Location"] <- "Kinston"
 R22_pheno <- R22_pheno[!(R22_pheno$Entry=="Barley"),]
 K22_pheno <- K22_pheno[!(K22_pheno$Entry=="Barley"),]
 K22_pheno$SNB <- ""
-#Combine phenotype files
-K22_pheno_subset <- K22_pheno[c("Cross_ID", "Entry", "Awns", "WDR", "flowering", "Powdery_mildew", "SNB", "Location", "Height")]
-R22_pheno_subset <- R22_pheno[c("Cross_ID", "Entry", "Awns", "WDR", "flowering", "Powdery_mildew", "SNB", "Location", "Height")]
-t_ph <- rbind(K22_pheno_subset, R22_pheno_subset)
 #CLEAN DATA/MISLABELLED LINES
-t_ph <- mutate(t_ph, Entry = if_else(Entry == "UX1994-6.4", "UX1994-64", Entry))
-t_ph <- mutate(t_ph, Entry = if_else(Entry == "UX2029-4.6", "UX2029-46", Entry))
+K22_pheno <- mutate(K22_pheno, Entry = if_else(Entry == "UX1994-6.4", "UX1994-64", Entry))
+K22_pheno <- mutate(K22_pheno, Entry = if_else(Entry == "UX2029-4.6", "UX2029-46", Entry))
+#which(R22_pheno$Entry == "UX2029-4.6")
+#Process Spikelet per spike (SpS) data files
+K22_SpS$ave_SpS <- apply(K22_SpS[,grepl("SpS", names(K22_SpS))], 1, mean, na.rm = TRUE)
+K22_SpS$ave_infert <- apply(K22_SpS[,grepl("Inf", names(K22_SpS))], 1, mean, na.rm = TRUE)
+R22_SpS$ave_SpS <- apply(R22_SpS[,grepl("SpS", names(R22_SpS))], 1, mean, na.rm = TRUE)
+R22_SpS$ave_infert <- apply(R22_SpS[,grepl("Inf", names(R22_SpS))], 1, mean, na.rm = TRUE)
+#Add SpS averages to phenotype files
+K22_pheno <- merge(K22_pheno, K22_SpS[,c("Tray", "ave_SpS", "ave_infert")], by= "Tray", all.x = TRUE)
+R22_pheno <- merge(R22_pheno, R22_SpS[,c("Tray", "ave_SpS", "ave_infert")], by= "Tray", all.x = TRUE)
+#Combine phenotype files
+K22_pheno_subset <- K22_pheno[c("Cross_ID", "Entry", "Awns", "WDR", "flowering", "Powdery_mildew", "SNB", "Location", "Height", "ave_SpS", "ave_infert")]
+R22_pheno_subset <- R22_pheno[c("Cross_ID", "Entry", "Awns", "WDR", "flowering", "Powdery_mildew", "SNB", "Location", "Height",  "ave_SpS", "ave_infert")]
+t_ph <- rbind(K22_pheno_subset, R22_pheno_subset)
 t_ph$Height <- as.numeric(t_ph$Height)
 #ADD COLUMN CONVERTING FLOWERING TIME FROM DATE TO DAYS
 days <- c()
@@ -66,14 +85,12 @@ for (i in c(1:length(t_ph$flowering))) {
 }
 t_ph$days_to_head <- days
 write.table(t_ph, file='output/all_phenotypes.tsv', quote=FALSE, sep='\t', row.names = FALSE)
-
-#Awn testing
+#Change awn from + to 1,0 for coding purposes
 awn_vector <- ifelse(t_ph$Awns=="+", 1,0)
 t_ph$Awns <- awn_vector
-colnames(t_ph)
 
-###READ IN IMPUTED VCF FILE, CLEAN UP DATA
-sunVCF <- read.vcf("data/SunRILs_2021_postimp_filt.vcf.gz", convert.chr = F)
+
+
 #filter out parents and thin on LD
 sunVCF <- select.inds(sunVCF, grepl("^UX", id))
 sunVCF <- LD.thin(sunVCF, threshold = .8)
@@ -85,6 +102,15 @@ sunVCF@ped$id <- gsub("-NEG", "", sunVCF@ped$id)
 #filter for resequenced and duplicated lines
 sunVCF <- select.inds(sunVCF, !grepl("-A-", id))
 sunVCF <- select.inds(sunVCF, !duplicated(id))
+
+#check coverage of genotype to phenotype
+#vcf_id <- sunVCF@ped$famid
+#t_ph$Entry
+#intersect(sunVCF@ped$famid,t_ph$Entry)
+
+#check preimpute
+#sunVCF2 <- read.vcf("data/initialRun/filt_and_imp_VCF/SunRILs_2021_preimp_filt_imp.vcf.gz", convert.chr = F)
+#sunVCF2 <- select.inds(sunVCF2, grepl("^UX", id))
 
 ###CHECK DATA TO ENSURE RELATIVE NORMALITY
 #Phenotypic data

@@ -2,12 +2,12 @@
 #Locations: Kinston and Midpines, NC
 #Created by Nicolas A. H. Lara
 #Created modelled after code written by Noah Dewitt in 2021
-#Last edit: 2022-7-8
+#Last edit: 2022-7-11
 
-install.packages("tidyverse")
-install.packages("gaston")
+#install.packages("tidyverse")
+#install.packages("gaston")
 ##install.packages("rrBLUP")
-install.packages("lmerTest")
+#install.packages("lmerTest")
 
 #Load in packages
 library(tidyverse)
@@ -21,7 +21,7 @@ library(lmerTest)
 setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
 ###READ IN IMPUTED VCF FILE, CLEAN UP DATA
 #sunVCF <- read.vcf("data/SunRILs_2021_postimp_filt.vcf.gz", convert.chr = F)
-sunVCF <- read.vcf("/Volumes/Nico/Grad_School/genomic_data/SunRILs/SunRILs_combGenos_fakeHeader_imp.vcf.gz")
+sunVCF <- read.vcf("data/SunRILs_combGenos_fakeHeader_imp.vcf.gz")
 
 ###READ IN PHENOTYPE FILE, CLEAN COLUMN NAMES, COMBINE LOCATIONS
 #K22_pheno <- read.delim("data/Kin22-SunRils-T1-T30 Final.xlsx - 2022-05-12-11-55-18_Kin22-SunRi.csv", sep=",")
@@ -140,7 +140,7 @@ crossLines <- filter(genoCounts, n == 2 )$Entry
 multi_crossLines <- filter(genoCounts, 2 < n & 10 > n )$Entry 
 
 #since we have 23 lines with more than 1 replicate at each location, we average them
-t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns), WDR = mean(as.numeric(WDR)), Powdery_mildew= mean(as.numeric(Powdery_mildew))) %>% ungroup()
+t_ph_group <- t_ph %>% group_by(Location, Entry, Cross_ID) %>% summarize(days_to_head = mean(days_to_head), Height = mean(Height), Awns = mean(Awns), WDR = mean(as.numeric(WDR)), Powdery_mildew = mean(as.numeric(Powdery_mildew)), ave_SpS = mean(ave_SpS), ave_infert = mean(ave_infert)) %>% ungroup()
 # %>% mutate(loc_fam = paste(Location, Cross_ID, sep="_"))
 #filter out any unreplicated lines
 t_ph_group <- filter(t_ph_group, !(Entry %in% single_crossLines))
@@ -178,26 +178,33 @@ for (i in c(1:len)) {
 		#plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))
 	}
 }
-
+write_csv(plot_df, "output/SunRILs_gwas_2022.csv")
 
 manhattan_plot <- function(graph_name, SNP, p_value) {
 	dataframe <- data.frame(id = SNP, p = p_value)
+	dataframe <- dataframe[complete.cases(dataframe),]
+	#Add new columns for staticstical metrics, chromosomes, etc.
 	dataframe$LOG <- -log10(dataframe$p)
 	dataframe$chr <- str_replace(str_replace(dataframe$id, "^S", ""), "_\\d*$", "")
 	dataframe$pos <- as.numeric(str_replace(dataframe$id, "^S\\d[ABD]_", ""))
 	dataframe$FDR <- p.adjust(dataframe$p, method = "fdr")
 	dataframe$bon <- p.adjust(dataframe$p, method = "bonferroni")
-	significant_markers <- filter(dataframe, bon < .05)
-	print(head(sigMarkers))
+	#filter out significant markers for future analysis
+	####Should be bonferoni 0.05, testing
+	#significant_markers <- filter(dataframe, bon < .05)
+	significant_markers <- filter(dataframe, bon < .6)
+	print(head(significant_markers))
 	#plot out model
 	par(cex = 1.5, cex.main = 1.5, pch = 1, lwd=3, mai = c(4,4,3,1))
 	manhattan(dataframe, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = graph_name)
 	abline(h = 5.6, col = "#659157")
+	#give a main dataframe all significant markers
 	return(significant_markers)
 }
 
 sigMarkers <- data.frame()
 for (i in c(2:length(plot_df[1,]))) {
+	print(i)
 	name <- substring(names(plot_df[i]), 3)
 	print(name)
 	png(width=2500, height=1500, pointsize = 36, filename = paste('output/plots/', name, '.png', sep=""))
@@ -210,12 +217,9 @@ for (i in c(2:length(plot_df[1,]))) {
 ###Export all significant markers along with their associated trait
 write_csv(sigMarkers, "output/SunRILs_gwas_sig_markers_2022.csv")
 
-
 #manhattan_plot("Awn GWAS", plot_df$id, plot_df$p_Awns)
 #manhattan_plot("Height GWAS", plot_df$id, plot_df$p_Height)
 #manhattan_plot("Days to head GWAS", plot_df$id, plot_df$p_days_to_head)
-
-
 
 #write_csv(plot_df, "output/SunRILs_gwasOutput_2022.csv")
 

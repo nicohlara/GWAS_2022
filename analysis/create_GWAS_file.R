@@ -28,7 +28,7 @@ genotype <- read.vcf("data/SunRILs_combGenos_fakeHeader_filtered_imp.vcf.gz", co
 #genotype_file_list <- list.files(path = "data/population_VCF_files/", pattern = "*.vcf.gz")
 #genotype_files <- lapply(genotype_file_list, read.vcf)
 
-unique(genotype@snps$chr)
+#unique(genotype@snps$chr)
 
 #filter out parents and thin on LD
 genotype <- select.inds(genotype, grepl("^UX", id))
@@ -46,11 +46,21 @@ genotype <- select.inds(genotype, !duplicated(id))
 genotype_sync <- select.inds(genotype, id %in% phenotype$Entry)
 phenotype_sync <- filter(phenotype, Entry %in% genotype_sync@ped$id)
 
-###CREATE BASIC MODEL FOR MANHATTAN PLOT
+#Filter by location
+#phenotype_sync <- filter(phenotype_sync, Location == "Raleigh")
+#phenotype_sync <- phenotype_sync[c("Location", "Entry", "Cross_ID", "days_to_head")]
+#Filter by new variables
+phenotype_sync <- subset(phenotype_sync, select=-c(Awns, days_to_head, Height, SNB, ave_infert, ave_SpS, Powdery_mildew, WDR))
+
+### CREATE BASIC MODEL FOR MANHATTAN PLOT ###
 plot_df <- data.frame()
 len <- length(genotype_sync@snps$id)
+count <- 0
 for (i in c(1:len)) {
-	print(paste(round((i/len)*100, digits=2), "%", sep=""))
+	if (round((i/len)*100) > count) {
+		count <- round((i/len)*100)
+		print(paste(count, "%", sep=""))
+	}	
 	a <- as.matrix(genotype_sync[,i])
 	b <- data.frame(Entry = rownames(a), Marker = as.vector(a[,1]))
 	c <- colnames(a)
@@ -64,6 +74,8 @@ for (i in c(1:len)) {
 			#p <- summary(mm)$coefficients["Marker",4]
 			#TREATING LOCATION AND FAMILY RANDOM EFFECTS, takes a while to run
 			mm <- suppressMessages(lmer(data = d, d[,j] ~ Marker + (1|Location) + (1|Cross_ID)))
+			#Running without location
+			#mm <- suppressMessages(lmer(data = d, d[,j] ~ Marker + (1|Cross_ID)))
 			p <- anova(mm)["Marker",6]
 			p_vals[paste("p_", names(phenotype_sync[j]), sep="")] <- p
 		}

@@ -52,6 +52,8 @@ phenotype_sync <- filter(phenotype, Entry %in% genotype_sync@ped$id)
 ###Filter by subset variables
 #phenotype_sync <- phenotype_sync[c("Location", "Entry", "Cross_ID", "days_to_head")]
 #phenotype_sync <- subset(phenotype_sync, select=-c(Awns, days_to_head, Height, SNB, ave_infert, ave_SpS, Powdery_mildew, WDR))
+###SNB was only taken in Raleigh and can't be run though location based model
+phenotype_sync <- subset(phenotype_sync, select=-c(SNB))
 
 
 ### CREATE BASIC MODEL FOR MANHATTAN PLOT ###
@@ -74,7 +76,7 @@ for (i in c(1:len)) {
 			e <- e[complete.cases(e),]
 			d[,j] <- as.numeric(d[,j])
 			###TREATING LOCATION AND FAMILY RANDOM EFFECTS
-			mm <- suppressMessages(lmer(data = e, e[,4] ~ Marker + (1|Location) + (1|Cross_ID)))
+			mm <- suppressMessages(lmer(data = d, d[,j] ~ Marker + (1|Location) + (1|Cross_ID)))
 			###Running without location
 			#mm <- suppressMessages(lmer(data = d, d[,j] ~ Marker + (1|Cross_ID)))
 			p <- anova(mm)["Marker",6]

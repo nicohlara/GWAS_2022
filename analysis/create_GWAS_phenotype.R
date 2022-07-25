@@ -8,7 +8,9 @@
 library(tidyverse)
 
 ### SET WORKING DIRECTORY ###
-setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
+#setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
+#setwd("C:/Users/nalara/Documents/GitHub/GWAS_2022/")
+
 
 ### READ IN PHENOTYPE FILES ###
 #growing season traits
@@ -96,6 +98,11 @@ t_ph <- merge(t_ph, SpS_data[,c("Location","Tray", "spikes_per_plot", "ave_SpS",
 #add VIBE files to phenotype files
 VIBE_subset <- VIBE[c("Location", "Tray", "NumberOfParticles", "WeightOf1000Particles","SampleAreaAverage", "WKAreaMedian")]
 t_ph <- merge(t_ph, VIBE_subset, by=c("Location", "Tray"), all.x=TRUE)
+
+
+#Remove outliers from phenotype files
+t_ph <- subset(t_ph, !(Location %in% outliers$Location & Tray %in% outliers$Tray & Cross_ID %in% outliers$Cross_ID & Entry %in% outliers$Entry))
+
 
 #add column converting flowering time date to days
 days <- c()

@@ -1,11 +1,12 @@
 #Create plots from GWAS data
 #Locations: Kinston and Midpines, NC
 #Created by Nicolas A. H. Lara
-#Created modelled after code written by Noah Dewitt in 2021
-#Last edit: 2022-7-11
+#Last edit: 2022-7-22
+
 
 library(tidyverse)
 library(gaston)
+library(RAINBOWR)
 #set working directory
 setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
 #Read in GWAS file
@@ -18,6 +19,9 @@ manhattan_plot <- function(graph_name, SNP, p_value) {
 	dataframe <- dataframe[complete.cases(dataframe),]
 	#Add new columns for staticstical metrics, chromosomes, etc.
 	dataframe$LOG <- -log10(dataframe$p)
+	thresh_df <-data.frame(marker=substr(dataframe$id,2,15), chrom=substr(dataframe$id,2,3), pos=substr(dataframe$id,5,15),	LOG=dataframe$LOG)
+	sig_thresh <- CalcThreshold(thresh_df,method=c("BH","Bonf"))
+	print(sig_thresh)
 	dataframe$chr <- str_replace(str_replace(dataframe$id, "^S", ""), "_\\d*$", "")
 	dataframe$pos <- as.numeric(str_replace(dataframe$id, "^S\\d[ABD]_", ""))
 	dataframe$FDR <- p.adjust(dataframe$p, method = "fdr")
@@ -29,13 +33,15 @@ manhattan_plot <- function(graph_name, SNP, p_value) {
 	#plot out model
 	par(cex = 1.5, cex.main = 1.5, pch = 1, lwd=3, mai = c(3,3,2,1))
 	manhattan(dataframe, chrom.col = c("#659157", "#69A2B0", "#FFCAB1"), main = graph_name)
-	abline(h = 5.6, col = "#659157")
+	abline(h = sig_thresh[[1]], col = "#d48b50")
+	abline(h = sig_thresh[[2]], col = "#aed9a0")
+	legend("topright", legend=c("Bonferroni Threshold","Benjamini-Hochberg Threshold"), fill=c("#aed9a0","#d48b50"),cex=0.8)
 	#Give a main dataframe all significant markers
-	print(head(significant_markers))
+	#print(head(significant_markers))
 	return(significant_markers)
 }
 #graph_name_list <- c("Mutation location", "Heading Date", "Height", "Awns", "Winter Dormancy Release", "Powdery Mildew", "Spikelet per Spike", "Infertile spikelet per Spike")
-#graph_name_list <- c("Mutation location","Seed Weight", "Mean Seed Area", "Median Seed Area", "Seeds per Spikelet")
+graph_name_list <- c("Mutation location","Seed Weight", "Mean Seed Area", "Median Seed Area", "Seeds per Spikelet")
 
 
 sigMarkers <- data.frame()
@@ -54,23 +60,6 @@ for (i in c(2:length(GWAS_results[1,]))) {
 }
 ###Export all significant markers along with their associated trait
 write_csv(sigMarkers, "output/SunRILs_gwas_sig_markers_2022.csv")
-
-
-
-
-
-
-#Calculating significance threshold
-#According to Kaler and Purcell, 2019
-###Y = a + bX 
-#Y = sig. threshold for -log10 P-value
-#a = intercept of regression
-#b = slope of regression coefficient
-#X = marker based heritability
-Y = a + bX), where Y was the significant threshold
-(−log 10 P-value), a was the intercept, and b was the slope
-of the regression coefficient for the marker-based herit-
-ability (X)
 
 
 ###Hard coded stuff for a few specific cases

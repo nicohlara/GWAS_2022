@@ -49,15 +49,17 @@ write_csv(plot_df, paste(dir, "/SunRILs_gwas_2022.csv", sep=""))
 ###PLOT DATA###
 GWAS_results <- plot_df
 
+GWAS_results <- read.delim("output/run_2022-07-26/SunRILs_gwas_2022.csv", sep=",")
+
 ###Set names for graphs
 graph_name_list <- substring(names(GWAS_results), 3)
 #graph_name_list <- c("Mutation location", "Awns", "Winter Dormancy Release", "Powdery Mildew", "Height", "Spikelet per Spike", "Infertile spikelet per Spike", "Seed Weight", "Seed Area (mean)", "Seed Area (median)",  "Heading Date", "Seeds per Spikelet")
 #graph_name_list <- c("Mutation location","Seed Weight", "Mean Seed Area", "Median Seed Area", "Seeds per Spikelet")
-
+dir.create(paste(dir, "/plots", sep=""))
 sigMarkers <- data.frame()
 for (i in c(2:length(GWAS_results[1,]))) {
 	name <- graph_name_list[i]
-	png(width=2500, height=1500, pointsize = 15, filename = paste('output/plots/', name, '.png', sep=""))
+	png(width=2500, height=1500, pointsize = 15, filename = paste(dir, "/plots/", name, '.png', sep=""))
 	sig_m <- manhattan_plot(name, GWAS_results$id, GWAS_results[,i])
 	dev.off()
 	if (!(dim(sig_m)[1] == 0)) {

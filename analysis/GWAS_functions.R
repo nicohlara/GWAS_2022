@@ -17,7 +17,7 @@ library(RAINBOWR)
 clean_genotype <- function(genotype) {
 	#filter out parents and thin on LD
 	genotype <- select.inds(genotype, grepl("^UX", id))
-	genotype <- LD.thin(genotype, threshold = .8)
+	genotype <- LD.thin(genotype, threshold = .8, max.dist = 350e6) #made for humans, Noah suggested changing to ~350MB 
 	genotype_matrix <- as.matrix(genotype)
 	#reformat ids to get rid of extra text
 	genotype@ped$id <- gsub("-NWG", "", genotype@ped$id)
@@ -38,27 +38,26 @@ GWAS_loop <- function(genotype, phenotype) {
 		if (round((i/len)*100) > count) {
 			count <- round((i/len)*100)
 			print(paste(count, "%", sep=""))
-		}	
-		a <- as.matrix(genotype[,i])
-		b <- data.frame(Entry = rownames(a), Marker = as.vector(a[,1]))
-		c <- colnames(a)
-		if (length(unique(b$Marker)) > 1) {
-			d <- merge(phenotype,b, by="Entry")
-			p_vals <- data.frame(id = c)
-			for (j in c(4:length(phenotype[1,]))) {
-				if (length(unique(d$Location)) > 1) {
-					###TREATING LOCATION AND FAMILY RANDOM EFFECTS
-					mm <- suppressMessages(lmer(data = d, d[,j] ~ Marker + (1|Location) + (1|Cross_ID)))
-				} else {
-					###Running without location
-					mm <- suppressMessages(lmer(data = d, d[,j] ~ Marker + (1|Cross_ID)))
-				}
-				p <- anova(mm)["Marker",6]
-				p_vals[paste("p_", names(phenotype[j]), sep="")] <- p
+	}	
+	a <- as.matrix(genotype[,i])
+	b <- data.frame(Entry = rownames(a), Marker = as.vector(a[,1]))
+	c <- colnames(a)
+	if (length(unique(b$Marker)) > 1) {
+		d <- merge(phenotype,b, by="Entry")
+		p_vals <- data.frame(id = c)
+		for (j in c(4:length(phenotype[1,]))) {
+			if (length(unique(d$Location)) > 1) {
+				###TREATING LOCATION AND FAMILY RANDOM EFFECTS
+				mm <- suppressMessages(lmer(data = d, d[,j] ~ Marker + (1|Location) + (1|Cross_ID)))
+			} else {
+				###Running without location
+				mm <- suppressMessages(lmer(data = d, d[,j] ~ Marker + (1|Cross_ID)))
 			}
-			plot_df <- rbind(plot_df, p_vals)
-			#plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))
+			p <- anova(mm)["Marker",6]
+			p_vals[paste("p_", names(phenotype[j]), sep="")] <- p
 		}
+		plot_df <- rbind(plot_df, p_vals)
+		#plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))
 	}
 	return(plot_df)
 }

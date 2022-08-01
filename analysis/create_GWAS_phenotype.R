@@ -1,7 +1,7 @@
 ###Create phenotype files from field data 2022
 #Locations: Kinston and Midpines, NC
 #Created by Nicolas A. H. Lara
-#Created modelled after code written by Noah Dewitt in 2021
+#Created modeled after code written by Noah Dewitt in 2021
 #Last edit: 2022-7-20
 
 ### LOAD IN PACKAGES

@@ -2,14 +2,14 @@
 ##Created by Nicolas A. H. Lara
 ##Last edit: 2022-7-28
 
+###SET WORKING DIRECTORY
+#setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
+#setwd("C:/Users/nalara/Documents/GitHub/GWAS_2022/")
+
 ###LOAD PACKAGES
 library(tidyverse)
 library(gaston)
 source("analysis/GWAS_functions.R")
-
-###SET WORKING DIRECTORY
-setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
-#setwd("C:/Users/nalara/Documents/GitHub/GWAS_2022/")
 
 ###READ IN AND PROCESS DATAFILES
 sig_markers <- read.delim("output/run_2022-07-26/SunRILs_gwas_sig_markers_2022.csv", sep=",")
@@ -24,33 +24,25 @@ genotype@ped$family <- a[,1]
 
 ###LOOPING THROUGH SIGNIFICANT MARKERS AND GETTING HET STATE FOR EACH FAMILY
 fam_sig_id <- data.frame()
-for (trait in unique(sig_markers$trait)) {
-	print(trait)
+for (traits in unique(sig_markers$trait)) {
+	print(traits)
 	##subset trait
-	markers <- subset(sig_markers, trait == trait)
+	markers <- subset(sig_markers, trait == traits)
+	print(length(markers$trait))
 	##select snps
 	geno_sub <- select.snps(genotype, id %in% markers$id)
-	for (family in unique(geno_sub@ped$family)) {
-		print(family)
-		fam_group <- as.data.frame(as.matrix(select.inds(geno_sub, family == family)))
-		for (marker in colnames(fam_group)) {
-			variant <- unique(fam_group[[marker]])
-			temp_df <- data.frame(family = family, trait = trait, marker = marker, p = subset(sig_markers, id == marker)$p, variants = paste(variant, collapse=", "))
+	for (fam in unique(geno_sub@ped$family)) {
+		print(fam)
+		fam_group <- as.data.frame(as.matrix(select.inds(geno_sub, family == fam)))
+		for (mark in colnames(fam_group)) {
+			variant <- unique(fam_group[[mark]])
+			temp_df <- data.frame(family = fam, trait = traits, marker = mark, p = subset(sig_markers, id == mark)$p, variants = paste(variant, collapse=", "))
 			if (length(variant) == 1) {temp_df["hom_het_state"] <- "homozygous"} else {temp_df["hom_het_state"] <- "heterozygous"}
 			fam_sig_id <- rbind(fam_sig_id, temp_df)
 		}
 	}
 }
 
-write_csv(fam_sig_id, paste(dir,"/SunRILs_family_significant_id_2022.csv", sep=""))
-
-###Want:
-##Dataframe with family, heterozygocity/homo state at each SNP, relevant trait, p value
-
-
-genotype_sync@snps$id) {
-	
-	
-}
-
-###
+write_csv(fam_sig_id, "output/SunRILs_family_significant_id_2022.csv")
+het_sig_id <-  subset(fam_sig_id, hom_het_state == "heterozygous")
+write_csv(het_sig_id, "output/SunRILs_segregating_sign_markers.csv")

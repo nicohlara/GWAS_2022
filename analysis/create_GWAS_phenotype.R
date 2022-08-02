@@ -68,6 +68,7 @@ VIBE <- subset(VIBE, !(SampleName == "test" | SampleName == ""))
 VIBE <- mutate(VIBE, SampleName = if_else(SampleName == "Kin22-UX2023-2_3-9-4_Ap", "Kin22-UX2023-2_3-9-1_Ap", SampleName))
 VIBE <- mutate(VIBE, SampleName = if_else(SampleName == "Kin22_UX1993-70_29-17-2_Ap", "Kin22_UX1993-70_26-17-2_Ap", SampleName))
 VIBE <- mutate(VIBE, SampleName = if_else(SampleName == "_Kin22-UX2023-8_3-20-2_Ap", "Kin22-UX2023-8_3-20-2_Ap", SampleName))
+VIBE <- mutate(VIBE, SampleName = if_else(SampleName == "R22_UX1992-82_52-17-1_Ap", "R22_UX1992-82_25-17-1_Ap", SampleName))
 VIBE <- data.frame(lapply(VIBE, function(x) {gsub("22-", "22_", x)}))
 #get parents for SampleName splitting
 parents <- unique(subset(R22_pheno, Cross_ID == "Parent")$Entry)
@@ -183,3 +184,21 @@ heatmap(sunGRMTest, symm = T)
 #TrayCounts <- group_by(VIBE, Tray) %>% count() %>% ungroup()
 #filter(TrayCounts, n > 2)
 #subset(t_ph, Tray == "29.17.2")
+# VIBE_tray <- paste(VIBE$Location, substr(VIBE$Tray, 1,2), sep = "_")
+# SpS_tray <- paste(SpS_data$Location, substr(SpS_data$Tray, 1,2), sep = "_")
+# VIBE_tray <- unique(VIBE_tray)
+# SpS_tray <- unique(SpS_tray)
+# for (i in SpS_tray) {
+	# if (i %in% VIBE_tray) {
+		# #print(paste(i, "VIBE'd", sep=" "))
+	# } else {
+		# print(paste(i, "missing", sep=" "))
+	# }	
+# }
+# for (i in VIBE_tray) {
+	# if (i %in% SpS_tray) {
+		# #print(paste(i, "VIBE'd", sep=" "))
+	# } else {
+		# print(paste(i, "mislabeled", sep=" "))
+	# }	
+# }

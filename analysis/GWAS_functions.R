@@ -14,21 +14,6 @@ library(RAINBOWR)
 #GWAS_kinston_heading <- read.delim("output/data/SunRILs_Kinston_heading_gwas_2022.csv", sep=",")
 #GWAS_raleigh_heading <- read.delim("output/data/SunRILs_Raleigh_heading_gwas_2022.csv", sep=",")
 
-clean_genotype <- function(genotype) {
-	#filter out parents and thin on LD
-	genotype <- select.inds(genotype, grepl("^UX", id))
-	genotype <- LD.thin(genotype, threshold = .8, max.dist = 350e6) #made for humans, Noah suggested changing to ~350MB 
-	genotype_matrix <- as.matrix(genotype)
-	#reformat ids to get rid of extra text
-	genotype@ped$id <- gsub("-NWG", "", genotype@ped$id)
-	genotype@ped$id <- gsub("-A+", "", genotype@ped$id)
-	genotype@ped$id <- gsub("-NEG", "", genotype@ped$id)
-	#filter for resequenced and duplicated lines
-	genotype <- select.inds(genotype, !grepl("-A-", id))
-	genotype <- select.inds(genotype, !duplicated(id))
-	return(genotype)
-}
-
 GWAS_loop <- function(genotype, phenotype) {
 	plot_df <- data.frame()
 	len <- length(genotype@snps$id)
@@ -59,8 +44,8 @@ GWAS_loop <- function(genotype, phenotype) {
 			plot_df <- rbind(plot_df, p_vals)
 			#plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))
 		}
-		return(plot_df)
 	}
+	return(plot_df)
 }
 
 manhattan_plot <- function(graph_name, SNP, p_value) {

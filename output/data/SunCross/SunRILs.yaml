@@ -1,0 +1,17 @@
+# Data from Brown-Guedira Lab, 2022
+crosstype: riself
+geno: SunRILs_geno.csv
+gmap: SunRILs_gmap.csv
+pheno: SunRILs_pheno.csv
+#phenocovar: SunRILs_phenocovar.csv
+covar: SunRILs_covar.csv
+alleles:
+- A
+- B
+genotypes:
+  AA: 1
+  AB: 2
+  BB: 3
+na.strings:
+- NA
+- "NULL"

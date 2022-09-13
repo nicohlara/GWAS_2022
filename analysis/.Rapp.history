@@ -1,0 +1,739 @@
+library(igraph)
+data <- matrix(sample(0:1, 400, replace=TRUE, prob=c(0.8,0.2)), nrow=20)#
+network <- graph_from_adjacency_matrix(data , mode='undirected', diag=F )#
+# When ploting, we can use different layouts:#
+par(mfrow=c(2,2), mar=c(1,1,1,1))#
+plot(network, layout=layout.sphere, main="sphere")
+data
+crosses <- read.delim("/Users/nico/Documents/GitHub/GWAS_2022/data/cross_parentage.csv", sep=",")
+crosses
+crosses <- read.delim("/Users/nico/Documents/GitHub/GWAS_2022/data/cross_parentage.csv", sep=",")
+crosses
+crosses <- read.delim("/Users/nico/Documents/GitHub/GWAS_2022/data/cross_parentage.csv", sep=",")
+crosses
+crosses <- read.delim("/Users/nico/Documents/GitHub/GWAS_2022/data/cross_parentage.csv", sep=",")
+crosses
+crosses <- matrix(crosses)
+crosses
+data
+crosses <- read.delim("/Users/nico/Documents/GitHub/GWAS_2022/data/cross_info/cross_matrix.csv", sep=",")
+crosses
+crosses <- matrix(crosses)
+crosses
+crosses <- as.matrix("/Users/nico/Documents/GitHub/GWAS_2022/data/cross_info/cross_matrix.csv", sep=",")
+crosses
+read.delim
+crosses <- read.delim("/Users/nico/Documents/GitHub/GWAS_2022/data/cross_info/cross_matrix.csv", sep=",")
+crosses
+data
+network <- graph_from_adjacency_matrix(crosses, mode='undirected', diag=F)
+crosses <- as.matrix(crosses)
+crosses
+crosses <- as.vector(as.matrix(crosses))
+crosses
+network <- graph_from_adjacency_matrix(crosses, mode='undirected', diag=F)
+crosses <- read.delim("/Users/nico/Documents/GitHub/GWAS_2022/data/cross_info/cross_matrix.csv", sep=",")
+crosses
+frow.names(crosses)
+row.names(crosses)
+row.names(crosses) <- crosses$X
+crosses
+crosses[c(2:),]
+crosses[2:,]
+crosses[2..,]
+a <- (1..)
+a
+crosses[,-1]
+crosses <- as.matrix(crosses[,-1])
+crosses
+network <- graph_from_adjacency_matrix(crosses, mode='undirected', diag=F)
+network
+par(mfrow=c(2,2), mar=c(1,1,1,1))
+plot(network, layout=layout.sphere, main="sphere")
+plot(network, layout=layout.circle, main="circle")
+help(layout)
+plot(network, layout=layout.circle, main="circle")
+layout_nicely(network, dim=2)
+plot(network, layout=layout_nicely(network, dim=2))
+plot(network, layout=layout.fruchterman.reingold, main="FR")
+help(plot)
+par()
+help(par)
+par(cex.main=2, col.lab="green", col="red",)
+par(cex.main=2, col.lab="green", col="red")
+plot(network, layout=layout.circle, main="circle")
+plot(network, layout=layout.circle, main="circle", vertex.color="red", edge.color="green")
+plot(network, layout=layout.circle, main="circle", vertex="none", edge.color="green")
+plot(network, layout=layout.circle, main="circle", vertex=NULL, edge.color="green")
+plot(network, layout=layout.circle, main="circle", vertex.color="red", vertex.shape="pie, "edge.color="green")
+plot(network, layout=layout.circle, main="circle", vertex.color="red", vertex.shape="pie", edge.color="green")
+plot(network, layout=layout.circle, main="circle", vertex.color="red", vertex.shape="none", edge.color="green")
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green", label.font=2)
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green", label.font="2")
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green",label.dist=1)
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green",label.dist="1")
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green",label.dist="1", label.degree="none")
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green",label.dist="1", label.degree="none", label.color="red")
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green",arrow.size=2)
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green",arrow.size=4)
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green",arrow.size=10)
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green",arrow.width=10)
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green", curved=TRUE)
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green", edge.curved=TRUE)
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green", edge.curved=1)
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green", edge.curved=1, vertex.label.dist=.5)
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green", edge.curved=1, vertex.label.dist=.5, vertex.label.dist="1")
+plot(network, layout=layout.circle, main="circle", #
+	vertex.shape="none", vertex.label.dist="1",#
+	edge.color="green", edge.curved=1)
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", vertex.label.dist="1", edge.color="green", edge.curved=1)
+plot(network, layout=layout.circle, main="circle", vertex.shape="none", edge.color="green", edge.curved=1, vertex.label.dist=.5, vertex.label.dist="1")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.label.dist=.5, vertex.label.dist="1")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.label.dist=.5, vertex.label.dist="10")
+network
+network[1]
+network[1,]
+colnames(network)
+rownames(network)
+network[0,]
+network[,0]
+coords <- layout_in_circle(network)
+V(network)$label.color <- network[0]
+plot(network, layout=coords)
+coords <- layout_in_circle(network)#
+V(network)$edge.color="red"#
+V(network)$edge.curved="1"#
+plot(network, layout=coords)
+g <- network#
+g<layout <- layout_in_circle#
+plot(g)
+g <- make_ring(network)
+g <- network
+g$layout <- layout_in_circle
+plot(g)
+g$edge.color="red"
+plot(g)
+V(g)$edge.color="red"
+plot(g)
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.label.dist=.5, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.dist=.5, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.dist=1, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.size=20, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.size=15, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green")#, edge.curved=1, vertex.shape="none", vertex.size=15, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none")#, vertex.size=15, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.size=15)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.size=10)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.size=1)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.label.cex=2)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.label.cex=.5)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.label.cex=.75)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.label.cex=.75, vertex.label.dist=1)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.label.cex=.75, vertex.label.dist=-1)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=1, vertex.shape="none", vertex.label.cex=.75)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=.75, vertex.shape="none", vertex.label.cex=.75)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=.5, vertex.shape="none", vertex.label.cex=.75)#, vertex.label.dist="10")
+seq(1, 10, 2)
+seq(pi/2, 0, 13)
+pi
+seq((pi/2), 0, 13)
+seq((pi/2), 0, length=13)
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=.5, vertex.shape="none", vertex.label.cex=.75, vertex.label.degree=pi)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=.5, vertex.shape="none", vertex.label.cex=.75, vertex.label.degree=pi/2)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=.5, vertex.shape="none", vertex.label.cex=.75, vertex.label.degree=0)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=.5, vertex.shape="none", vertex.label.cex=.75, vertex.label.dist=1, vertex.label.degree=0)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=.5, vertex.shape="none", vertex.label.cex=.75#, vertex.label.dist=1, vertex.label.degree=0)#, vertex.label.dist="10")
+)
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=.5, edge.width=3 vertex.shape="none", vertex.label.cex=.75)#, vertex.label.dist=1, vertex.label.degree=0)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=.5, edge.width=3, vertex.shape="none", vertex.label.cex=.75)#, vertex.label.dist=1, vertex.label.degree=0)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=.5, edge.width=3, vertex.shape="none", vertex.label.cex=.75, vertex.label.degree = 10)#, vertex.label.dist=1, vertex.label.degree=0)#, vertex.label.dist="10")
+plot(network, layout=layout.circle, main="circle", edge.color="green", edge.curved=.5, edge.width=3, vertex.shape="none", vertex.label.cex=.75, vertex.label.degree = .5)#, vertex.label.dist=1, vertex.label.degree=0)#, vertex.label.dist="10")
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, #
+	#vertex.label.degree = .5#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, #
+	vertex.label.degree = pi ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, #
+	vertex.label.degree = pi/2 ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, #
+	vertex.label.degree = pi/2 ,#
+	vertex.label.dist=1 ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, #
+	vertex.label.degree = pi/2 ,#
+	vertex.label.dist=10 ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, #
+	vertex.label.degree = 0 ,#
+	vertex.label.dist=10 ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, #
+	vertex.label.degree = pi/2 ,#
+	#0 to the right#
+	vertex.label.dist=10 ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, #
+	vertex.label.degree = pi ,#
+	#0 to the right#
+	vertex.label.dist=10 ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, #
+	vertex.label.degree = -pi/2 ,#
+	#0 to the right#
+	#pi/2 down#
+	#pi left#
+	#-pi/2#
+	vertex.label.dist=10 ,#
+)
+seq((pi/2),0,length=4)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, #
+	vertex.label.degree = -pi/2 ,#
+	#0 to the right#
+	#pi/2 down#
+	#pi left#
+	#-pi/2#
+	#vertex.label.dist=10 ,#
+)
+seq(0, (-pi/2), length=4)
+seq((-pi/2), pi, length=3)
+seq(pi, (pi/2), length=3)
+seq((pi/2), 0, length=3)
+rotation <- c(#
+	seq(0, (-pi/2), length=4), #
+	seq((-pi/2), pi, length=3),#
+	seq(pi, (pi/2), length=3),#
+	seq((pi/2), 0, length=3),#
+)
+rotation <- c(#
+	seq(0, (-pi/2), length=4), #
+	seq((-pi/2), pi, length=3),#
+	seq(pi, (pi/2), length=3),#
+	seq((pi/2), 0, length=3)#
+)
+rotation
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, #
+	vertex.label.degree = rotation ,#
+	#0 to the right#
+	#pi/2 down#
+	#pi left#
+	#-pi/2#
+	vertex.label.dist=5 ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, #
+	vertex.label.degree = rotation ,#
+	#0 to the right#
+	#pi/2 down#
+	#pi left#
+	#-pi/2#
+	vertex.label.dist=1 ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75, )
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	#0 to the right#
+	#pi/2 down#
+	#pi left#
+	#-pi/2#
+	vertex.label.dist=1 ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75,)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	#0 to the right#
+	#pi/2 down#
+	#pi left#
+	#-pi/2#
+	vertex.label.dist=1 ,#
+)
+distance <- c(2,1,.5,0,0,2,2,2,0,.5,.5,0,1.5)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	vertex.shape="none", #
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="red"#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation #
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="red",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation #
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="red",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+rotation
+seq(pi,0, length=6)
+rotation <- c(#
+	seq(0, pi, length=7),#
+	seq(pi, 0, length=6)#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="red",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+rotation
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="red",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+rotation <- c(#
+	seq(0, -pi, length=7),#
+	seq(pi, 0, length=6)#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="red",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="red",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	#vertex.label.dist=distance ,#
+)
+distance <- c(2,1,0,0,0,1,2,0,0,0.5,0.5,0,2)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="red",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA47",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#66E9CA47",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4766",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA47AA",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4722",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4744",#
+	vertex.frame.color="#E9CA4744"#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4744",#
+	vertex.frame.color="#E9CA4744",#
+	vertex.label.cex=.75,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="green", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4744",#
+	vertex.frame.color="#E9CA4744",#
+	vertex.label.cex=.9,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="#4471D6", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4744",#
+	vertex.frame.color="#E9CA4744",#
+	vertex.label.cex=.9,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="circle", #
+	edge.color="#4471D6AA", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4744",#
+	vertex.frame.color="#E9CA4744",#
+	vertex.label.cex=.9,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+plot(network, #
+	layout=layout.circle, #
+	main="Parent Crosses", #
+	edge.color="#4471D6AA", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4744",#
+	vertex.frame.color="#E9CA4744",#
+	vertex.label.cex=.9,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+)
+genotype <- read.vcf("data/used_vcf/SunRILs_2021_postimp_filt.vcf.gz", convert.chr = F)
+#Last edit: 2022-7-11#
+#
+library(tidyverse)#
+library(gaston)#
+library(lmerTest)
+genotype <- read.vcf("data/used_vcf/SunRILs_2021_postimp_filt.vcf.gz", convert.chr = F)
+library(igraph)
+crosses <- read.delim("/Users/nico/Documents/GitHub/GWAS_2022/data/cross_info/cross_matrix.csv", sep=",")
+row.names(crosses) <- crosses$X
+crosses <- as.matrix(crosses[,-1])
+network <- graph_from_adjacency_matrix(crosses, mode='undirected', diag=F)
+rotation <- c(seq(0, -pi, length=7),seq(pi, 0, length=6))
+distance <- c(1.25,0.5,0.1,0,0,0.75,1.75,0,0,0.75,0.5,0,1.5)
+head(network)
+network
+png(width=1500, height=1500, filename = '/Users/nico/Documents/GitHub/GWAS_2022/output/cross_network.png')#
+#
+par(bg=NA)#
+plot(network, #
+	layout=layout.circle, #
+	#main="Parent Crosses", #
+	edge.color="#67A247", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4744",#
+	vertex.frame.color="#E9CA4744",#
+	vertex.label.cex=.9,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+	vertex.label.color="black"#
+)#
+dev.copy(png, "/Users/nico/Documents/GitHub/GWAS_2022/output/cross_network.png")#
+dev.off()
+)
+dev.off()
+png(width=3000, height=3000, filename = '/Users/nico/Documents/GitHub/GWAS_2022/output/cross_network.png')#
+#
+par(bg=NA)#
+plot(network, #
+	layout=layout.circle, #
+	#main="Parent Crosses", #
+	edge.color="#67A247", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4744",#
+	vertex.frame.color="#E9CA4744",#
+	vertex.label.cex=2,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+	vertex.label.color="black"#
+)#
+dev.copy(png, "/Users/nico/Documents/GitHub/GWAS_2022/output/cross_network.png")#
+dev.off()
+dev.off()
+png(width=3000, height=3000, filename = '/Users/nico/Documents/GitHub/GWAS_2022/output/cross_network.png')#
+#
+par(bg=NA)#
+plot(network, #
+	layout=layout.circle, #
+	#main="Parent Crosses", #
+	edge.color="#67A247", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4744",#
+	vertex.frame.color="#E9CA4744",#
+	vertex.label.cex=10,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+	vertex.label.color="black"#
+)#
+dev.copy(png, "/Users/nico/Documents/GitHub/GWAS_2022/output/cross_network.png")#
+dev.off()
+dev.off()
+dev.off()
+dev.off()
+png(width=3000, height=3000, filename = '/Users/nico/Documents/GitHub/GWAS_2022/output/cross_network.png')#
+#
+par(bg=NA)#
+plot(network, #
+	layout=layout.circle, #
+	#main="Parent Crosses", #
+	edge.color="#67A247", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4744",#
+	vertex.frame.color="#E9CA4744",#
+	vertex.label.cex=7,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+	vertex.label.color="black"#
+)#
+dev.copy(png, "/Users/nico/Documents/GitHub/GWAS_2022/output/cross_network.png")#
+dev.off()
+dev.off()
+png(width=3500, height=3000, filename = '/Users/nico/Documents/GitHub/GWAS_2022/output/cross_network.png')#
+#
+par(bg=NA)#
+plot(network, #
+	layout=layout.circle, #
+	#main="Parent Crosses", #
+	edge.color="#67A247", #
+	edge.curved=.5, #
+	edge.width=3, #
+	#vertex.shape="none", #
+	vertex.color="#E9CA4744",#
+	vertex.frame.color="#E9CA4744",#
+	vertex.label.cex=7,#
+	vertex.label.degree = rotation ,#
+	vertex.label.dist=distance ,#
+	vertex.label.color="black"#
+)#
+dev.copy(png, "/Users/nico/Documents/GitHub/GWAS_2022/output/cross_network.png")#
+dev.off()
+dev.off()

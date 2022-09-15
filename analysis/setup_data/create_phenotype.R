@@ -2,26 +2,26 @@
 #Locations: Kinston and Midpines, NC
 #Created by Nicolas A. H. Lara
 #Created modeled after code written by Noah Dewitt in 2021
-#Last edit: 2022-8-17
+#Last edit: 2022-9-14
 
 ### LOAD IN PACKAGES
 library(tidyverse)
 
 ### SET WORKING DIRECTORY ###
-#setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
+setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
 #setwd("C:/Users/nalara/Documents/GitHub/GWAS_2022/")
 
 
 ### READ IN PHENOTYPE FILES ###
 #growing season traits
-K22_pheno <- read.delim("data/Kin22-SunRils-T1-T30.csv", sep=",")
-R22_pheno <- read.delim("data/R22-SunRil-T1-30.csv", sep=",")
+K22_pheno <- read.delim("data/phenotype/Kin22-SunRils-T1-T30.csv", sep=",")
+R22_pheno <- read.delim("data/phenotype/R22-SunRil-T1-30.csv", sep=",")
 #spikelet per spike/infertile spikelet traits
-K22_SpS <- read.delim("data/SpS_data.xlsx - Kinston.csv", sep=",")
-R22_SpS <- read.delim("data/SpS_data.xlsx - Raleigh.csv", sep=",")
+K22_SpS <- read.delim("data/phenotype/SpS_data.xlsx - Kinston.csv", sep=",")
+R22_SpS <- read.delim("data/phenotype/SpS_data.xlsx - Raleigh.csv", sep=",")
 #seed traits from VIBE
-VIBE_file_list <- list.files(path = "data/VIBE_reports/", pattern = "*.csv")
-VIBE_files <- lapply(paste("data/VIBE_reports/", VIBE_file_list, sep=""), read.csv)
+VIBE_file_list <- list.files(path = "data/phenotype/VIBE_reports/", pattern = "*.csv")
+VIBE_files <- lapply(paste("data/phenotype/VIBE_reports/", VIBE_file_list, sep=""), read.csv)
 VIBE <- bind_rows(VIBE_files)
 #outliers to filter
 outliers <- read.delim("output/data/outliers.csv", sep=",")

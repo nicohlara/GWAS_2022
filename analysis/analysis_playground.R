@@ -23,6 +23,29 @@ genotype <- read.bed.matrix("data/SunRILs_filtered_2022")
 phenotype <- filter(phenotype, Entry %in% genotype@ped$id)
 
 
+#t_ph_group is replicated averaged
+#t_ph is not
+
+t_ph_s1 <- subset(t_ph, Cross_ID != "Parent")
+
+for (j in unique(t_ph_s1$Location)) {
+	print(j)
+	phen <- subset(t_ph_s1, Location == j)
+	print(length(phen$Entry))
+	print(length(unique(phen$Entry)))
+	for (i in unique(phen$Cross_ID)) {
+		print(i)
+		print(length((subset(phen, Cross_ID == i)$Entry)))
+		print(length(unique(subset(phen, Cross_ID == i)$Entry)))
+	}
+}
+# for (i in unique(t_ph$Entry)) {
+	# a <- subset(t_ph, Entry == i, select=c("Location", "Cross_ID", "Entry"))
+	# if (length(a$Entry) < 2) { print(a) }
+# }
+
+
+
 ###################Vrn segregation amid selected populations##################
 geno_sub <- select.inds(genotype, family %in% c("UX1993", "UX2023", "UX1444", "Parents"))
 geno_sub <- select.snps(geno_sub, (chr == "5A" & pos >= 585018041 & pos <= 598072246) | (chr == "5B" & pos >= 564000000 & pos <= 568000000))

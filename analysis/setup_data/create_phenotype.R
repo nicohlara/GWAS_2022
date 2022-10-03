@@ -113,13 +113,15 @@ R22_pheno_subset <- R22_pheno[c("Location", "Tray", "Cross_ID", "Entry", "Awns",
 t_ph <- rbind(K22_pheno_subset, R22_pheno_subset)
 t_ph <- merge(t_ph, SpS_data[,c("Location","Tray", "spikes_per_plot", "ave_SpS", "ave_infert")], by= c("Location", "Tray"), all.x = TRUE)
 
+#Remove outliers from VIBE file
+VIBE <- subset(VIBE, !(Location %in% outliers$Location & Tray %in% outliers$Tray & Cross_ID %in% outliers$Cross_ID & Entry %in% outliers$Entry))
+
 #add VIBE files to phenotype files
 VIBE_subset <- VIBE[c("Location", "Tray", "NumberOfParticles", "WeightOf1000Particles","SampleAreaAverage", "WKAreaMedian")]
 t_ph <- merge(t_ph, VIBE_subset, by=c("Location", "Tray"), all.x=TRUE)
 
 
-#Remove outliers from phenotype files
-t_ph <- subset(t_ph, !(Location %in% outliers$Location & Tray %in% outliers$Tray & Cross_ID %in% outliers$Cross_ID & Entry %in% outliers$Entry))
+
 
 
 #add column converting flowering time date to days
@@ -142,8 +144,10 @@ num_col <- colnames(subset(t_ph, select=-c(Location, Cross_ID, Entry)))
 t_ph[,num_col] <- apply(t_ph[,num_col], 2, as.numeric)
 #sapply(t_ph, class)
 t_ph$seeds_per_spikelet <- (t_ph$NumberOfParticles/t_ph$spikes_per_plot)/t_ph$ave_SpS
-#thin out outliers, as determined by SpS/VIBE analysis of outliers. See data processing file
-t_ph <- subset(t_ph, !(Entry %in% outliers$Entry & Location == "Kinston" ))
+
+##thin out outliers, as determined by SpS/VIBE analysis of outliers. See data processing file
+##This was already done in earlier step
+#t_ph <- subset(t_ph, !(Entry %in% outliers$Entry & Location == "Kinston" ))
 
 
 ### CLEAN UP PHENOTYPIC DATA FOR COMBINING WITH GENOTYPE ###

@@ -152,6 +152,10 @@ t_ph$seeds_per_spikelet <- (t_ph$NumberOfParticles/t_ph$spikes_per_plot)/t_ph$av
 
 ### CLEAN UP PHENOTYPIC DATA FOR COMBINING WITH GENOTYPE ###
 t_ph = subset(t_ph, select=-c(flowering, Tray, spikes_per_plot, NumberOfParticles))
+
+##export raw phenotypic data for viewing
+write_csv(t_ph, 'output/data/2022_raw_phenotype.csv')
+
 #check for duplication and lack of replication
 genoCounts <- group_by(t_ph, Entry) %>% count() %>% ungroup()
 #parLines <- filter(genoCounts, n > 10)$Entry

@@ -9,9 +9,9 @@ alleles:
 - A
 - B
 genotypes:
-  AA: 1
-  AB: 2
-  BB: 3
+  A: 1
+  H: 2
+  B: 3
 na.strings:
 - NA
 - "NULL"

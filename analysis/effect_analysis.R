@@ -10,16 +10,28 @@ setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
 library(tidyverse)
 library(gaston)
 library(qtl2)
+library(qtl2convert)
 
 phenotype <- read.delim("output/data/2022_phenotype.csv", sep=",")
 genotype <- read.bed.matrix("data/SunRILs_filtered_2022")
 
 ###creating cross2 files
-# geno <- as.matrix(genotype)
-# geno[geno==0] <- "AA"
-# geno[geno==1] <- "AB"
-# geno[geno==2] <- "BB"
-# write.csv(geno, "output/data/SunCross/SunRILs_geno.csv")
+# genotype_subset <- select.inds(genotype, id %in% phenotype$Entry)
+# geno <- as.matrix(genotype_subset)
+# #geno <- t(geno
+# allele_codes <- as.matrix(genotype@snps[c('A1', 'A2')])
+# rownames(allele_codes) <- genotype@snps$id
+# for (i in colnames(geno)) {
+#   geno[,i][geno[,i]==0] <- allele_codes[i,1]
+#   geno[,i][geno[,i]==1] <- paste(allele_codes[i,1], allele_codes[i,2], sep="")
+#   geno[,i][geno[,i]==2] <- allele_codes[i,2]
+# }
+# output_codes <- c('-', "A", "H", "B")
+# geno <- t(encode_geno(t(geno), allele_codes))
+# for (i in colnames(geno)) {
+#   if (length(unique(geno[,i])) <= 1) {geno <- geno[,colnames(geno)!=i]}
+# }
+#write.csv(geno, "output/data/SunCross/SunRILs_geno.csv")
 # gmap <- subset(genotype@snps, select=c("id", "chr", "pos"))
 # names(gmap)[names(gmap)=="id"] <- "marker"
 # write.csv(gmap, "output/data/SunCross/SunRILs_gmap.csv", row.names=FALSE)
@@ -35,6 +47,9 @@ write.csv(pheno, "output/data/SunCross/SunRILs_pheno.csv", row.names=FALSE)
 # #write.csv(phenocovar, "/Users/nico/Desktop/cross2_file_test/SunRILs_phenocovar.csv", row.names=FALSE)
 # covar <- distinct(subset(phenotype, select=c("Entry", "Cross_ID")))#, Cross_ID %in% c("UX2029", "UX2000", "UX1995")))
 # write.csv(covar, "output/data/SunCross/SunRILs_covar.csv", row.names=FALSE)
+#cross_parents <- read.delim('output/data/SunCross/SunRILs_cross_parents.csv', sep=",")
+
+#write.csv(cross_info, "output/data/SunCross/SunRILs_cross_info.csv")
 SunCross <- read_cross2("output/data/SunCross/SunRILs.yaml")
 
 ###Performing analysis
@@ -103,8 +118,7 @@ for (j in families) {
 write.csv(SunValues, paste(dir, "/", "SunRILs_effect_LOD.csv", sep=""))
 
 
-S5A_698528417
-
+SunProb <- calc_genoprob(cross=SunCross, map=NULL)
 g <- maxmarg(SunProb, SunCross$gmap, chr='5A', pos=698528417, return_char=TRUE)
 par(mar=c(4.1, 4.1, 0.6, 0.6))
 plot_pxg(g, SunCross$pheno[,"Awns"], ylab="Awn phenotype")

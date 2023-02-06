@@ -8,7 +8,9 @@ library(gaston)
 #library(RAINBOWR)
 #source("analysis/GWAS_functions.R")
 #install.packages('asreml')
-#library(asreml)
+library(asreml)
+library(AGHmatrix)
+library(ASRgenomics)
 #install.packages("qtl2")
 library(qtl2)
 #install.packages('qtl')
@@ -111,17 +113,39 @@ plot(H2, exp(lik2$likelihood), type="l", xlab="h^2", ylab = "likelihood")
 
 
 ###asreml
-#get inverse of relationship matrix
-gryphonped <- read.csv("/Users/nico/Documents/GitHub/wam_tuto/data/gryphonped.csv")
-gryphon <- read.csv("/Users/nico/Documents/GitHub/wam_tuto/data/gryphon.csv")
-ainv <- ainverse(gryphonped)
+raw_pheno <- read.delim("output/data/2022_raw_phenotype.csv", sep=",")
+##make genotype data for model
+#rgeno <- t(as.matrix(genotype))
+#marker <- str_split(rownames(rgeno), "_")
+#chr <- as.matrix(lapply(marker, '[[', 1)) %>% 'colnames<-'('chrom')
+#loc <- as.matrix(as.numeric(lapply(marker, '[[', 2))) %>% 'colnames<-'('pos')
+#rgeno <- cbind(chr, loc, rgeno)
+#geno <- as.matrix(genotype)
+##The G matrix we calculated above is not positive definite. Use nearPD function from Matrix
+#package to get a positive definite matrix and remove singularity.
+##This comment taken from For726, may not be accurate
+#G <- Gmatrix(geno, method = "VanRaden", ploidy = 2)
+#RealizedPD = nearPD(G, keepDiag = T)
+#G = matrix(RealizedPD[[1]]@x, nrow = RealizedPD[[1]]@Dim[1])
+#G = G + diag(0.01, nrow(G))
+#attr(G, "dimnames") = RealizedPD[[1]]@Dimnames
+#summary(eigen(G)$values)
+Ginv.sparse <- G.inverse(G = G, sparseform = TRUE)$Ginv
+#write.csv(Ginv.sparse, 'output/data/Ginv.csv', row.names=FALSE)
+Ginv.sparse <- as.matrix(read.delim('output/data/Ginv.csv', sep=","))
+rownames(Ginv.sparse) <- c(1:dim(Ginv.sparse)[1])
+##Coerce factors
+phenotype$Location <- as.factor(phenotype$Location)
+phenotype$Entry <- as.factor(phenotype$Entry)
 #make model
-model1 <- asreml(
-  fixed = bwt ~ 1, random = ~ vm(animal, ainv),
-  residual = ~ idv(units),
-  data = gryphon,
-  na.action = na.method(x = "omit", y = "omit")
-)
+model1 <- asreml(Height ~ Location,
+                 random = ~vm(Entry, Ginv.sparse),
+                 data=phenotype)
+
+gblup_mod <- asreml(Plant_Height ~ Environment,
+                    random = ~vm(Genotype, Ginv.sparse),
+                    data=rpheno)
+
 #plot
 plot(model1)
 
@@ -140,6 +164,3 @@ pos <- c(NA, as.numeric(sapply(col_names,"[[",2))/1e6)
 genotype_matrix <- rbind(chrom, pos, genotype_matrix)
 
 write.csv(genotype_matrix, "output/data/CIM_matrix.csv")
-
-
-

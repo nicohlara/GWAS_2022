@@ -11,10 +11,11 @@ library(gaston)
 #library(asreml)
 #install.packages("qtl2")
 library(qtl2)
-
+#install.packages('qtl')
+library(qtl)
 
 ### SET WORKING DIRECTORY ###
-#setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
+setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
 #setwd("C:/Users/nalara/Documents/GitHub/GWAS_2022/")
 
 
@@ -109,7 +110,6 @@ lines(lik2$tau, lik2$sigma2)
 plot(H2, exp(lik2$likelihood), type="l", xlab="h^2", ylab = "likelihood")
 
 
-
 ###asreml
 #get inverse of relationship matrix
 gryphonped <- read.csv("/Users/nico/Documents/GitHub/wam_tuto/data/gryphonped.csv")
@@ -124,4 +124,22 @@ model1 <- asreml(
 )
 #plot
 plot(model1)
+
+
+###CIM code
+Sun_cross <- subset(phenotype, Location=='Raleigh', select=c('Entry', 'Awns'))
+rownames(Sun_cross) <- Sun_cross$Entry
+Sun_cross <- select(Sun_cross, -'Entry')
+geno_matrix <- data.frame(as.matrix(genotype))
+genotype_matrix <- merge(Sun_cross, geno_matrix, by=0, all=FALSE)
+row.names(genotype_matrix) <- genotype_matrix$Row.names
+genotype_matrix <- genotype_matrix[,-1]
+col_names <- str_split(colnames(geno_matrix), "_")
+chrom <- c(NA, sapply(col_names,"[[",1))
+pos <- c(NA, as.numeric(sapply(col_names,"[[",2))/1e6)
+genotype_matrix <- rbind(chrom, pos, genotype_matrix)
+
+write.csv(genotype_matrix, "output/data/CIM_matrix.csv")
+
+
 

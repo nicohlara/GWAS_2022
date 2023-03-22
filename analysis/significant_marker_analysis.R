@@ -4,7 +4,7 @@
 
 ###SET WORKING DIRECTORY
 #setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
-#setwd("C:/Users/nalara/Documents/GitHub/GWAS_2022/")
+setwd("C:/Users/nalara/Documents/GitHub/GWAS_2022/")
 
 ###LOAD PACKAGES
 install.packages('snp_plotter')
@@ -130,3 +130,31 @@ significant_markers <- rbind(significant_markers_all, significant_markers_Kinsto
 significant_markers <- subset(significant_markers, MAF > .15)
 significant_markers <- arrange(significant_markers, trait, marker)
 write_csv(significant_markers, "output/SunRILs_sig_markers_2022.csv")
+
+
+###ID pops segregating for 6A PH QTL
+SixA_qtl <- subset(sig_markers, chr == '6A' & trait == 'Height')
+geno_sub <- select.snps(genotype, id %in% SixA_qtl$id)
+subset_list <- c('Parents', 'UX1443', 'UX1444', 'UX1990', 'UX2002', 'UX2007', 'UX2008', 'UX2020', 'UX2028')
+geno_sub <- select.inds(geno_sub, !(family %in% subset_list))
+
+SixA_fam <- data.frame()
+for (fam in unique(geno_sub@ped$family)) {
+  print(fam)
+  fam_group <- as.data.frame(as.matrix(select.inds(geno_sub, family == fam)))
+  for (mark in colnames(fam_group)) {
+    sub_geno <- select.inds(geno_sub, family==fam)
+    sub_geno <- select.snps(sub_geno, id==mark)
+    temp_df <- data.frame(family=fam, trait=traits, marker=mark, MAF=sub_geno@snps$maf, p=subset(sig_markers, (id == mark & trait == traits))$p)
+    SixA_fam <- rbind(SixA_fam, temp_df)
+  }
+}
+
+SixA_mat <- matrix(nrow = length(unique(SixA_fam$family)), ncol = length(unique(SixA_fam$marker)), dimnames=list(sort(unique(SixA_fam$family), decreasing=T), unique(SixA_fam$marker)))
+for (i in rownames(SixA_mat)) {
+  for (j in colnames(SixA_mat)) {
+    SixA_mat[i,j] = subset(SixA_fam, family == i & marker == j)$MAF
+  }
+}
+par(pin=c(5,5))
+heatmap(SixA_mat, Rowv=NA, Colv=NA)#, scale='none', margins=c(8,4))

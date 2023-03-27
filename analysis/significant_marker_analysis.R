@@ -10,6 +10,7 @@ setwd("C:/Users/nalara/Documents/GitHub/GWAS_2022/")
 install.packages('snp_plotter')
 library(tidyverse)
 library(gaston)
+library(gridExtra)
 source("analysis/GWAS_functions.R")
 
 ###READ IN AND PROCESS DATAFILES
@@ -160,3 +161,14 @@ for (i in rownames(SixA_mat)) {
 par(pin=c(5,5))
 heatmap(SixA_mat, Rowv=NA, Colv=NA, scale='none', margins=c(10,10))
 legend('bottomright', legend = c('0', '1', '2'), fill = c('#FFFFD5', '#FFBF00', '#750202'), bty='n')
+
+saf <- SixA_fam %>% subset(family == 'UX1989', select=c(marker, p)) %>% mutate(p = -log(p))
+barplot <- ggplot(data=saf, aes(x=marker, y=p)) +
+  geom_bar(stat='identity')
+
+SixA_fam$pos <- gsub('S6A_', '', SixA_fam$marker)
+heatmap <- ggplot(SixA_fam, aes(x = reorder(marker, as.numeric(pos)), y = family, fill=MAF)) +
+  geom_tile() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 1))
+
+ggarrange(barplot, heatmap, nrow = 1, ncol = 2)

@@ -3,7 +3,7 @@
 ##Last edit: 2022-7-28
 
 ###SET WORKING DIRECTORY
-#setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
+setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
 setwd("C:/Users/nalara/Documents/GitHub/GWAS_2022/")
 
 ###LOAD PACKAGES
@@ -144,8 +144,9 @@ for (fam in unique(geno_sub@ped$family)) {
   fam_group <- as.data.frame(as.matrix(select.inds(geno_sub, family == fam)))
   for (mark in colnames(fam_group)) {
     sub_geno <- select.inds(geno_sub, family==fam)
-    sub_geno <- select.snps(sub_geno, id==mark)
-    temp_df <- data.frame(family=fam, trait=traits, marker=mark, MAF=sub_geno@snps$maf, p=subset(sig_markers, (id == mark & trait == traits))$p)
+    sub_geno <- as.matrix(select.snps(sub_geno, id==mark))
+    abs_MAF <- sum(sub_geno[,mark])/(2*length(sub_geno[,mark]))
+    temp_df <- data.frame(family=fam, marker=mark, MAF=abs_MAF, p=subset(sig_markers, id == mark)$p)
     SixA_fam <- rbind(SixA_fam, temp_df)
   }
 }
@@ -157,4 +158,5 @@ for (i in rownames(SixA_mat)) {
   }
 }
 par(pin=c(5,5))
-heatmap(SixA_mat, Rowv=NA, Colv=NA)#, scale='none', margins=c(8,4))
+heatmap(SixA_mat, Rowv=NA, Colv=NA, scale='none', margins=c(10,10))
+legend('bottomright', legend = c('0', '1', '2'), fill = c('#FFFFD5', '#FFBF00', '#750202'), bty='n')

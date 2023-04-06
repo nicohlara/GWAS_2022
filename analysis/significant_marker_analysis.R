@@ -1,6 +1,6 @@
 ###Find populations with recombination at significant loci
 ##Created by Nicolas A. H. Lara
-##Last edit: 2022-7-28
+##Last edit: 2023-3-28
 
 ###SET WORKING DIRECTORY
 setwd("/Users/nico/Documents/GitHub/GWAS_2022/")

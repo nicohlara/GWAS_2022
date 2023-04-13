@@ -33,7 +33,7 @@ subset_geno <- select.snps(subset_geno, callrate >= .9 & maf >=.3 & chr != 'UN')
 
 #############################ASMap testing########################################
 ###testing subset
-subset_geno <- select.snps(subset_geno, chr == '6A')
+subset_geno <- select.snps(subset_geno, chr %in% c('3A', '4B', '6A'))
 
 ###restructuring data to qtl object
 geno <- as.data.frame(t(as.matrix(subset_geno)), stringAsFactors = FALSE)
@@ -43,7 +43,9 @@ geno[geno==2] <- "B"
 geno[is.na(geno)] <- "U"
 
 ###creating basic object for analysis and preprocessing
-RIL_map <- mstmap(geno, bychr=TRUE, "RIL6")
+#RIL_map <- mstmap(geno, bychr=TRUE, "RIL6")
+
+RIL_map <- mstmap.data.frame(geno, bychr=TRUE, pop.type='RIL6', p.value = 1e-6)
 RIL_map_f <- pullCross(RIL_map, type="co.located")
 #RIL_map_f <- pullCross(RIL_map_f, type="seg.distortion")
 

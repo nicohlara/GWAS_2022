@@ -38,8 +38,9 @@ GWAS_loop <- function(genotype, phenotype) {
 					###Running without location
 					mm <- suppressMessages(lmer(data = d, d[,j] ~ Marker + (1|Cross_ID)))
 				}
-				p <- anova(mm)["Marker",6]
-				p_vals[paste("p_", names(phenotype[j]), sep="")] <- p
+				#p <- anova(mm)["Marker",6]
+			  p <- 2 * (1 - pnorm(abs(data.frame(coef(summary(mm)))['Marker','t.value'])))
+			  p_vals[paste("p_", names(phenotype[j]), sep="")] <- p
 			}
 			plot_df <- rbind(plot_df, p_vals)
 			#plot_df <- rbind(plot_df, data.frame(id = c, p = p_val))

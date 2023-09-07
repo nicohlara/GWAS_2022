@@ -6,7 +6,7 @@
 
 #set working directory
 #setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
-#setwd("C:/Users/nalara/Documents/GitHub/GWAS_2022/")
+setwd("C:/Users/nalara/Documents/GitHub/GWAS_2022/")
 
 #install.packages("pegas")
 library(tidyverse)
@@ -26,7 +26,7 @@ phenotype_sync <- filter(phenotype, Entry %in% genotype@ped$id)
 ###Rust was only taken in Kinston and can't be run though location based model
 #phenotype_run <- subset(phenotype_sync, select=-c(SNB, Rust))
 #phenotype_run <- subset(phenotype_sync, Location == "Raleigh", select=-c(Awns, Rust, Powdery_mildew))
-
+phenotype_run <- select(phenotype_sync, c(Location, Cross_ID, Entry, Height))
 ###RUN THE GWAS AND SAVE RESULTS TO A NEW DATATABLE
 ########can add specific marker locations into the model and remove them from the tested model list
 ########can also do iterative model and take out the most significant marker each time then repeat GWAS with that as fixed effect
@@ -52,7 +52,7 @@ dir.create(paste(dir, "/Raleigh_plots", sep=""))
 sigMarkers <- data.frame()
 for (i in c(2:length(GWAS_results[1,]))) {
 	name <- graph_name_list[i]
-	png(width=2500, height=1500, pointsize = 15, filename = paste(dir, "/Raleigh_plots/", name, '.png', sep=""))
+	png(width=2500, height=1500, pointsize = 15, filename = 'C:/Users/nalara/Documents/GitHub/Drone_2023/figures/2022_height_for_testing_GWAS.png')#paste(dir, "/Raleigh_plots/", name, '.png', sep=""))
 	sig_m <- manhattan_plot(name, GWAS_results$id, GWAS_results[,i])
 	dev.off()
 	if (!(dim(sig_m)[1] == 0)) {

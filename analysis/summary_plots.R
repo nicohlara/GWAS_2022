@@ -9,7 +9,7 @@ library(yarrr)
 #setwd("/Users/nico/Documents/GitHub/GWAS_2022/")
 setwd("C:/Users/nalara/Documents/GitHub/GWAS_2022/")
 
-phenotype <- read.delim("output/data/2022_raw_phenotype.csv", sep=",")
+phenotype <- read.delim("output/data/2022_phenotype.csv", sep=",")
 
 column_rename <- c('Awns', 'Winter Dormancy Release', 'Powdery Mildew', 'Septoria Nodorum Blotch', 'Height', 'Leaf Rust', 'Spikelets per Spike', 'Infertile Spikelets per Spike', 'Seed Weight', 'Seed Size (mean)', 'Seed Size (median)', 'Days to Head', 'Seeds per Spikelet')
 ###Correlation matrix of all variables
@@ -20,7 +20,7 @@ cor_matrix <- phenotype %>%
 	cor(use = 'pairwise.complete.obs') %>%
 	round(2) %>%
 	as.data.frame %>%
-	rownames_to_column(var = 'var1') %>%
+	rownames_to_column(var = 'var1') #%>%
 	gather(var2, value, -var1) %>%
 	arrange(desc(value))
 
